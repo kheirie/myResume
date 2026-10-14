@@ -14,3 +14,6 @@ dist/
 .claude/settings.local.json
 
 raw/
+
+# Personal Claude Code instructions
+CLAUDE.local.md

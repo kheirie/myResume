@@ -8,6 +8,7 @@ published: 2022-03-01
 url: https://medium.com/data-science/attention-is-all-you-need-e498378552f9
 sources:
   - Medium article, https://medium.com/data-science/attention-is-all-you-need-e498378552f9 (text retrieved via Medium RSS, 2026-10-13)
+  - Clarifications from Kheirie (2026-10-13)
 open_questions: []
 ---
 

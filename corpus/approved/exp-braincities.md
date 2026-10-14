@@ -10,7 +10,7 @@ date_range: 2020-08 to 2021-08
 sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
-  - Clarifications from Kheirie (2026-10-12)
+  - Clarifications from Kheirie (2026-10-12 to 2026-10-14)
 section_sources:
   about-braincities-lab:
     - Braincities Lab LinkedIn company page (retrieved 2026-10-12); website http://www.braincities.co

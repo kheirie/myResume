@@ -6,7 +6,7 @@ source_type: cv
 sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
-  - Clarifications from Kheirie (2026-10-12)
+  - Clarifications from Kheirie (2026-10-12 to 2026-10-13)
 open_questions: []
 ---
 
