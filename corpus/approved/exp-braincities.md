@@ -27,7 +27,7 @@ Braincities Lab is a Paris-based startup that uses artificial intelligence and d
 At Braincities Lab, Kheirie contributed to HR proof-of-concept solutions, including a Workforce Mapping Solution for ENEL Company.
 
 ## Job-matching project for ENEL
-At Braincities Lab, Kheirie was responsible for the job-matching component of the Workforce Mapping Solution for ENEL. The goal was to match jobs from ENEL's database, held in unorganized Excel sheets, to standardized jobs in the O*NET (Occupational Information Network) and ESCO (European Skills, Competences, Qualifications and Occupations) classifications. A software engineer on the team was responsible for extracting ENEL's data. Kheirie web-scraped job pages with BeautifulSoup to collect job descriptions and examples, and fine-tuned the Sentence-BERT model used for semantic matching. The system achieved 90% accuracy, measuring how accurately it matched ENEL's jobs to the relevant O*NET and ESCO jobs.
+At Braincities Lab, Kheirie was responsible for the job-matching component of the Workforce Mapping Solution for ENEL. The goal was to match jobs from ENEL's database, held in unorganized Excel sheets, to standardized jobs in the O*NET (Occupational Information Network) and ESCO (European Skills, Competences, Qualifications and Occupations) classifications. A software engineer on the team was responsible for extracting O*NET's and ESCO's data. Kheirie web-scraped job pages with BeautifulSoup to collect job descriptions and examples, and fine-tuned the Sentence-BERT model used for semantic matching. The system achieved 90% accuracy, measuring how accurately it matched ENEL's jobs to the relevant O*NET and ESCO jobs.
 
 ## Technologies used at Braincities Lab
 Sentence-BERT, BeautifulSoup.
