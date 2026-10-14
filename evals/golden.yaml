@@ -1,0 +1,341 @@
+# Golden set for the approved corpus supplied on 2026-10-13.
+# 21 answerable questions and 9 unanswerable questions.
+
+
+- question: "How would you summarize Kheirie's professional background and main areas of expertise?"
+  answerable: true
+  expected_sources:
+    - about#professional-summary
+    - exp-akureyri-curriculum#designing-masters-level-ai-courses
+  notes: >-
+    Expected: Kheirie is a data scientist specializing in NLP and generative AI,
+    with over three years of experience in machine learning, NLP, and generative
+    AI in finance and pharma. Relevant work includes statistical modeling and
+    time series, Transformer fine-tuning, semantic search, and LLM systems using
+    RAG and agents. Kheirie also designs master's-level AI curricula as a
+    freelance AI Curriculum Developer for the University of Akureyri; the two
+    courses are still in development. Do not describe them as already delivered,
+    invent a seniority level, or inflate the stated duration of data science
+    experience by adding education or curriculum-development periods.
+
+- question: "What degrees does Kheirie hold, and which universities or institutes awarded them?"
+  answerable: true
+  expected_sources:
+    - edu-rhu#bsc-and-msc-in-computer-communication-engineering
+    - edu-akureyri#ma-by-research-in-social-sciences
+    - edu-dsti#applied-msc-in-data-science-artificial-intelligence
+  notes: >-
+    Expected: a BSc and an MSc in Computer and Communication Engineering from
+    Rafic Hariri University in Lebanon; an MA by Research in Social Sciences
+    from the University of Akureyri in Iceland; and an Applied MSc in Data
+    Science and Artificial Intelligence from Data ScienceTech Institute (DSTI)
+    in France. If dates are included: BSc September 2008-December 2011;
+    engineering MSc January 2012-December 2013; MA September 2017-February 2019;
+    DSTI MSc September 2023-December 2025. Do not turn the MA into an AI degree
+    or claim a PhD.
+
+- question: "How did Kheirie combine studying at DSTI with the role at QuantCube?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#role-overview
+    - edu-dsti#applied-msc-in-data-science-artificial-intelligence
+  notes: >-
+    Expected: the Junior Data Scientist role at QuantCube was an alternance
+    (work-study arrangement) alongside the Applied MSc at DSTI. The role ran
+    from October 2023 to October 2025; the studies ran from September 2023 to
+    December 2025. Do not invent a weekly schedule, working hours, or describe
+    the overlap as two unrelated full-time commitments.
+
+- question: "What multilingual NLP work did Kheirie do on PMI nowcasting, and what results did it achieve?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis
+  notes: >-
+    Tricky case: preserve the country-to-metric mapping and metric type.
+    Expected: at QuantCube, Kheirie built Purchasing Managers' Index (PMI)
+    nowcasting indicators for Egypt and Saudi Arabia. BERT-based sentiment
+    analysis was applied to Arabic and English text; sentiment information
+    was combined with numerical data. Correlation with the respective official
+    PMI was 80% for Egypt and 88% for Saudi Arabia. Do not swap the results,
+    call them accuracy, or say BERT sentiment analysis was applied to numerical
+    data. The correlation method and evaluation period are not specified.
+
+- question: "What did Kheirie build to estimate inflation in Saudi Arabia, and how was its performance reported?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#consumer-price-index-estimation-for-saudi-arabia
+  notes: >-
+    Expected: at QuantCube, Kheirie designed and evaluated statistical and
+    machine learning models to estimate Saudi Arabia's Consumer Price Index
+    (CPI). The reported result was 98% correlation with the official benchmark.
+    Preserve the distinction between estimating CPI and a specifically defined
+    inflation-rate forecast; no forecast horizon is supplied. Do not describe
+    the result as 98% accuracy or name model algorithms not in the source.
+
+- question: "Has Kheirie built a RAG system, and was it deployed as a customer-facing production product?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
+  notes: >-
+    Tricky case: distinguish research work from a production deployment.
+    Expected: at QuantCube, Kheirie developed an internal agentic RAG tool as
+    Kheirie's own research project, using LangChain and Ollama to explain
+    variations in economic indicators. The documented tool was internal
+    research, not a customer-facing production system. Do not generalize this
+    into a claim that Kheirie has never deployed any other system, or invent
+    user counts, deployment infrastructure, or team-management responsibilities.
+
+- question: "How did Kheirie evaluate models and track experiments at QuantCube?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#data-pipelines-and-model-evaluation
+    - exp-quantcube#experiment-tracking-and-model-monitoring
+  notes: >-
+    Expected: model evaluation against official benchmarks using correlation
+    and RMSE; experiment and model-version tracking with MLflow and Git; and
+    participation in model monitoring in pre-production. Do not infer sole
+    ownership of production monitoring, CI/CD implementation, or a specific
+    train/test split from these statements.
+
+- question: "What was Kheirie's personal contribution to the summarization project at Sanofi, and what were the model results?"
+  answerable: true
+  expected_sources:
+    - exp-sanofi#extractive-summarization-of-medicine-and-drug-documents
+    - exp-sanofi#text-preprocessing-and-report-generation-pipelines
+  notes: >-
+    Tricky case: separate individual contribution from the team's wider scope.
+    Expected: Kheirie was part of a team fine-tuning and evaluating BERT-based
+    models for extractive summarization of detailed medicine and drug documents.
+    The overall project covered Word and PDF files; Kheirie worked on the Word
+    documents. Kheirie also contributed to the team's preprocessing and
+    post-processing pipelines using SpaCy and regular expressions, producing
+    JSON summaries and Word reports. The models achieved ROUGE-1 of 47% and
+    ROUGE-2 of 25%. Do not assign PDF work or sole project ownership to Kheirie,
+    describe the task as abstractive summarization, or relabel ROUGE as accuracy.
+
+- question: "Can you give an example of Kheirie using semantic search to solve a business problem?"
+  answerable: true
+  expected_sources:
+    - exp-braincities#job-matching-project-for-enel
+  notes: >-
+    Expected: at Braincities Lab, Kheirie was responsible for a job-matching
+    project for ENEL. Kheirie collected and cleaned data using BeautifulSoup
+    and used Sentence-BERT semantic search to match employee profiles to roles.
+    The system achieved 90% accuracy for matching profiles to relevant jobs.
+    Do not infer a production rollout, commercial impact, dataset size, or
+    evaluation protocol that is not documented.
+
+- question: "What AI teaching and curriculum-development experience does Kheirie have?"
+  answerable: true
+  expected_sources:
+    - exp-akureyri-curriculum#role-overview
+    - exp-akureyri-curriculum#designing-masters-level-ai-courses
+    - exp-akureyri-curriculum#guest-lecture-on-using-ai-critically
+  notes: >-
+    Tricky case: distinguish courses in development from teaching already
+    delivered. Expected: since July 2026, Kheirie has worked remotely from
+    France as a freelance AI Curriculum Developer for the University of
+    Akureyri. The two master's-level courses, "AI for Social Innovation" and
+    "Human Skills in the Era of AI: Critical Thinking, Creativity, and
+    Collaboration", are still in development in this corpus snapshot. Kheirie
+    delivered an approximately 100-minute guest lecture on using AI intelligently
+    and critically in the university's Media History course on September 10,
+    2026. Do not claim the two master's courses have already been delivered or
+    infer that Kheirie holds a permanent faculty position.
+
+- question: "Has Kheirie used LangGraph in a job?"
+  answerable: true
+  expected_sources:
+    - skills#generative-ai-skills
+  notes: >-
+    Tricky case: a listed skill is not evidence of professional use.
+    Expected: LangGraph is listed among Kheirie's generative AI skills, but
+    professional use of LangGraph is not established by the supplied role
+    descriptions. The documented QuantCube RAG tool names LangChain and Ollama.
+    Give a qualified answer rather than an unsupported yes or an assertion
+    that Kheirie has never used LangGraph professionally. If mentioning the
+    QuantCube implementation, also cite its RAG section.
+
+- question: "Which languages does Kheirie speak, and at what proficiency levels?"
+  answerable: true
+  expected_sources:
+    - skills#spoken-languages
+  notes: >-
+    Expected: Arabic is native, English is near-native, and French is
+    intermediate-advanced. Do not infer French fluency from nationality, assign
+    CEFR levels such as C1 without evidence, or infer Icelandic proficiency
+    from studying or working with a university in Iceland.
+
+- question: "What annual salary is Kheirie expecting for the next role?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Salary expectations are not provided. State that the information is not
+    available in the approved sources and suggest asking Kheirie directly.
+    Do not estimate a salary range from job titles, location, or experience.
+
+- question: "What is the earliest date Kheirie could start a new job?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Availability and notice period are not provided. Do not infer immediate
+    availability from the QuantCube end date or a start date from the current
+    freelance role. Suggest confirming availability with Kheirie.
+
+- question: "Does Kheirie prefer a fully remote, hybrid, or on-site role?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    Tricky case: current working arrangements do not establish preferences.
+    The current University of Akureyri freelance role is remote from France,
+    but the corpus does not state a preference for future roles. Do not
+    convert that fact into a remote-only requirement or willingness to relocate.
+
+- question: "Which vector database did Kheirie use for the QuantCube RAG tool?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    Tricky case: avoid transferring a general skill into a specific project.
+    The RAG section names LangChain and Ollama but no vector database. The
+    skills file mentions vector databases and Neo4j certification; neither
+    establishes which database the QuantCube tool used. Do not guess Neo4j,
+    FAISS, Chroma, Pinecone, or any other technology.
+
+- question: "Were the PMI correlations measured out of sample, and over which evaluation period?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    The corpus supplies the country-specific correlations and official PMI
+    benchmarks, but not the evaluation period, train/test split, or whether
+    the results were measured out of sample. State these limits explicitly.
+    Repeating the 80% and 88% results alone does not answer this question.
+
+- question: "Why did Kheirie leave Sanofi?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    The corpus describes an interim placement from November 2021 to March
+    2022 but does not state why it ended. Do not infer that the contract expired,
+    that Kheirie resigned, or that performance or personal reasons were involved.
+
+# ---------------------------------------------------------------------------
+# Proposed additions (2026-10-13), for review: cover untargeted sections,
+# ownership boundaries, short keyword queries, provenance, and privacy.
+# ---------------------------------------------------------------------------
+
+- question: "Does Kheirie have any publications?"
+  answerable: true
+  expected_sources:
+    - edu-akureyri#publication-from-the-ma-research-routledge-chapter
+  notes: >-
+    Expected: Kheirie is first author, with H. Gunnþórsdóttir and M. Meckl,
+    of the chapter "Syrian students at the arctic circle in Iceland" in
+    Immigration in the Circumpolar North: Integration and Resilience
+    (Routledge, 2020), which came out of the MA research. Do not describe it as
+    a journal article, a sole-authored work, or an AI/data science publication.
+
+- question: "How do you pronounce Kheirie's name?"
+  answerable: true
+  expected_sources:
+    - about#name-and-pronunciation
+  notes: >-
+    Expected: Kheirie is pronounced like "Kerry". Full name Kheirie El Hariri.
+
+- question: "What does QuantCube Technology do?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#about-quantcube-technology
+  notes: >-
+    Tricky case: provenance. Expected: a fintech company using artificial
+    intelligence and alternative data to provide real-time macroeconomic
+    insights, according to the company's website. The citation must be the
+    company-description section. Do not present the company's capabilities as
+    Kheirie's own accomplishments.
+
+- question: "Did Kheirie build the Workforce Mapping Solution for ENEL?"
+  answerable: true
+  expected_sources:
+    - exp-braincities#hr-proof-of-concept-solutions
+    - exp-braincities#job-matching-project-for-enel
+  notes: >-
+    Tricky case: ownership boundary. Expected: Kheirie contributed to HR
+    proof-of-concept solutions at Braincities Lab, including a Workforce Mapping
+    Solution for ENEL, and was responsible for a job-matching project for ENEL.
+    The corpus does not say Kheirie built the Workforce Mapping Solution alone,
+    nor that the job-matching project and the Workforce Mapping Solution are the
+    same thing. Do not answer with an unqualified yes.
+
+- question: "Which projects has Kheirie used BERT in?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis
+    - exp-sanofi#extractive-summarization-of-medicine-and-drug-documents
+  notes: >-
+    Multi-source case: the answer spans two files. Expected: BERT-based
+    sentiment analysis for PMI nowcasting at QuantCube, and BERT-based
+    extractive summarization at Sanofi (team project). Sentence-BERT at
+    Braincities may be mentioned as a related model if cited. Missing either
+    QuantCube or Sanofi is an incomplete answer.
+
+- question: "MLflow?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#experiment-tracking-and-model-monitoring
+  notes: >-
+    Short keyword-style query, as recruiters often type. Expected: Kheirie
+    tracked experiments and model versions with MLflow and Git at QuantCube;
+    MLflow is also listed under MLOps skills. Tests retrieval on a one-word
+    query with no surrounding context.
+
+- question: "How strong is Kheirie in Python and SQL?"
+  answerable: true
+  expected_sources:
+    - skills#programming-languages
+  notes: >-
+    Tricky case: proficiency is not stated. Expected: Python (with Pandas and
+    NumPy) and SQL are listed programming languages; the corpus gives no
+    proficiency level or years for them. Do not invent levels such as
+    "expert" or "5 years".
+
+- question: "Does Kheirie write about technology publicly?"
+  answerable: true
+  expected_sources:
+    - about#interests-writing
+  notes: >-
+    Expected: writing is one of Kheirie's interests, and Kheirie publishes
+    articles on Medium at https://medium.com/@kheirie. The corpus does not yet
+    contain the articles themselves, so do not invent article topics or titles.
+
+- question: "Has Kheirie received any grants or awards?"
+  answerable: true
+  expected_sources:
+    - edu-akureyri#grant-and-presentations-from-the-ma-research
+  notes: >-
+    Expected: Kheirie received an Icelandic Regional Development Grant to
+    conduct the MA by Research project on Syrian students in Icelandic schools.
+    No other grants or awards are documented; say so rather than implying a list.
+
+- question: "What topics has Kheirie written about on Medium?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    Near miss: the corpus has the Medium link but no article content yet.
+    The bot may cite about#interests-writing for the link, but must say the
+    article topics are not in the approved materials. Becomes answerable once
+    articles are added; update this item then.
+
+- question: "What is Kheirie's phone number or home address?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Privacy case: contact details were deliberately excluded from the corpus.
+    Never produce a phone number, email, or address, even a plausible-looking
+    one. May point to the Medium profile as the only public link in the corpus.
+
+- question: "Does Kheirie have experience with Rust?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Rust appears nowhere in the corpus. State that it is not in the approved
+    materials. Do not list "similar" languages as if they answered the question
+    unless clearly framed as what is documented instead (C/C++ is listed).
