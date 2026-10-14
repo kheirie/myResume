@@ -1,11 +1,12 @@
 # Golden set for the approved corpus supplied on 2026-10-13.
-# 21 answerable questions and 9 unanswerable questions.
+# 28 answerable questions and 9 unanswerable questions.
 
 
 - question: "How would you summarize Kheirie's professional background and main areas of expertise?"
   answerable: true
   expected_sources:
     - about#professional-summary
+    - about#data-science-profile
     - exp-akureyri-curriculum#designing-masters-level-ai-courses
   notes: >-
     Expected: Kheirie is a data scientist specializing in NLP and generative AI,
@@ -118,13 +119,14 @@
   expected_sources:
     - exp-braincities#job-matching-project-for-enel
   notes: >-
-    Expected: at Braincities Lab, Kheirie was responsible for a job-matching
-    project for ENEL. Kheirie collected and cleaned data using BeautifulSoup
-    and used Sentence-BERT semantic search to match employee profiles to roles.
-    The system achieved 90% accuracy for matching profiles to relevant jobs.
+    Expected: at Braincities Lab, Kheirie was responsible for the job-matching
+    component of a Workforce Mapping Solution for ENEL, matching jobs from
+    ENEL's unorganized Excel database to standardized O*NET and ESCO jobs.
+    Kheirie web-scraped job descriptions and examples with BeautifulSoup and
+    fine-tuned the Sentence-BERT matching model. The system achieved 90%
+    accuracy in matching ENEL's jobs to the relevant O*NET and ESCO jobs.
     Do not infer a production rollout, commercial impact, dataset size, or
     evaluation protocol that is not documented.
-
 - question: "What AI teaching and curriculum-development experience does Kheirie have?"
   answerable: true
   expected_sources:
@@ -219,8 +221,8 @@
     that Kheirie resigned, or that performance or personal reasons were involved.
 
 # ---------------------------------------------------------------------------
-# Proposed additions (2026-10-13), for review: cover untargeted sections,
-# ownership boundaries, short keyword queries, provenance, and privacy.
+# Added 2026-10-13: untargeted sections, ownership boundaries, short keyword
+# queries, provenance, and privacy.
 # ---------------------------------------------------------------------------
 
 - question: "Does Kheirie have any publications?"
@@ -258,13 +260,12 @@
     - exp-braincities#hr-proof-of-concept-solutions
     - exp-braincities#job-matching-project-for-enel
   notes: >-
-    Tricky case: ownership boundary. Expected: Kheirie contributed to HR
-    proof-of-concept solutions at Braincities Lab, including a Workforce Mapping
-    Solution for ENEL, and was responsible for a job-matching project for ENEL.
-    The corpus does not say Kheirie built the Workforce Mapping Solution alone,
-    nor that the job-matching project and the Workforce Mapping Solution are the
-    same thing. Do not answer with an unqualified yes.
-
+    Tricky case: ownership boundary. Expected: not alone. Kheirie contributed
+    to the Workforce Mapping Solution and was responsible for its job-matching
+    component (web scraping job descriptions, fine-tuning Sentence-BERT). A
+    software engineer on the team extracted the O*NET and ESCO data. Do not
+    answer with an unqualified yes, and do not credit Kheirie with extracting
+    the O*NET and ESCO data.
 - question: "Which projects has Kheirie used BERT in?"
   answerable: true
   expected_sources:
@@ -316,14 +317,24 @@
     No other grants or awards are documented; say so rather than implying a list.
 
 - question: "What topics has Kheirie written about on Medium?"
-  answerable: false
-  abstain_type: near_miss
+  answerable: true
+  match: any
+  expected_sources:
+    - about#interests-writing
+    - art-modern-llm-ideas#article-overview
+    - art-evolution-language-modeling#article-overview
+    - art-foundations-deep-learning#article-overview
+    - art-llms-simply-explained#article-overview
+    - art-transformer-model#article-overview
   notes: >-
-    Near miss: the corpus has the Medium link but no article content yet.
-    The bot may cite about#interests-writing for the link, but must say the
-    article topics are not in the approved materials. Becomes answerable once
-    articles are added; update this item then.
-
+    Expected: articles explaining large language models (what they are,
+    history, limitations), the ideas behind modern LLMs (BERT vs GPT,
+    scaling, alignment, efficiency), the evolution of language modeling
+    (n-grams to Transformers), the Transformer architecture, and deep
+    learning foundations (forward propagation, backpropagation). Published in
+    Data Science Collective and Towards Data Science. match: any, because no
+    single retrieval can include all five overviews within top-k. Do not
+    invent article titles or topics.
 - question: "What is Kheirie's phone number or home address?"
   answerable: false
   abstain_type: off_topic
@@ -339,3 +350,89 @@
     Rust appears nowhere in the corpus. State that it is not in the approved
     materials. Do not list "similar" languages as if they answered the question
     unless clearly framed as what is documented instead (C/C++ is listed).
+
+# ---------------------------------------------------------------------------
+# Added 2026-10-14: Medium articles (knowledge vs experience) and the
+# education strand from the Learning & Development CV.
+# ---------------------------------------------------------------------------
+
+- question: "Has Kheirie built a Transformer model from scratch?"
+  answerable: true
+  expected_sources:
+    - art-transformer-model#article-overview
+  notes: >-
+    Tricky case: knowledge is not experience. Expected: Kheirie wrote an
+    article explaining the Transformer's encoder-decoder architecture, and
+    fine-tuned BERT-based models at QuantCube and (as part of a team) at
+    Sanofi. No source says Kheirie built a Transformer from scratch. Do not
+    claim it, and do not assert that Kheirie never has; say it is not
+    documented. Fine-tuning is not building from scratch.
+
+- question: "What teaching or coaching experience does Kheirie have?"
+  answerable: true
+  expected_sources:
+    - exp-tfl-fellow#teaching-mathematics-and-computer-subjects-in-primary-school
+    - exp-tfl-mentor#coaching-and-supervising-teaching-fellows
+    - exp-simey#english-course-design-for-syrian-refugee-learners
+  notes: >-
+    Expected: Teach For Lebanon Fellow (2014-2016), teaching mathematics and
+    computer subjects in Grades 1-6; Temporary Educational Mentor (Oct-Dec
+    2016), coaching 13 teaching fellows and writing observation reports;
+    EFL teacher at SIMEY (2017), designing a course and booklet for 9 Syrian
+    refugee learners. The University of Akureyri guest lecture and course
+    design may be added if cited. Do not inflate durations.
+
+- question: "Has Kheirie managed or supervised people?"
+  answerable: true
+  expected_sources:
+    - exp-tfl-mentor#coaching-and-supervising-teaching-fellows
+  notes: >-
+    Tricky case: supervision is not line management. Expected: as a
+    Temporary Educational Mentor at Teach For Lebanon (Oct-Dec 2016),
+    Kheirie supervised and coached 13 teaching fellows. No data science role
+    documents managing people. Do not describe Kheirie as a people manager
+    or team lead in data science roles.
+
+- question: "Does Kheirie have experience working with refugee communities?"
+  answerable: true
+  expected_sources:
+    - exp-simey#english-course-design-for-syrian-refugee-learners
+    - edu-akureyri#ma-research-topic-syrian-students-in-icelandic-schools
+  notes: >-
+    Cross-strand case. Expected: Kheirie designed an English course and
+    booklet for 9 Syrian refugee learners at SIMEY in Iceland, and the MA
+    research was qualitative research on Syrian students in Icelandic
+    schools, including interviews. Do not infer further humanitarian work.
+
+- question: "Did Kheirie do the data engineering for the ENEL project?"
+  answerable: true
+  expected_sources:
+    - exp-braincities#job-matching-project-for-enel
+  notes: >-
+    Tricky case: team split. Expected: partly. A software engineer extracted
+    the O*NET and ESCO data; Kheirie web-scraped job pages for job
+    descriptions and examples and fine-tuned the Sentence-BERT matching
+    model. The corpus does not say who prepared ENEL's Excel data. Do not
+    credit Kheirie with extracting the O*NET and ESCO data, and do not guess
+    who handled ENEL's data.
+
+- question: "Does Kheirie need visa sponsorship to work in France?"
+  answerable: true
+  expected_sources:
+    - about#nationality
+  notes: >-
+    Grounding policy (Q44): common, well-established general knowledge may
+    be applied to a cited fact, if marked as such. Expected: Kheirie has
+    French nationality (cited); as general information, French nationals do
+    not need visa sponsorship to work in France or elsewhere in the EU.
+    Not allowed: guesses about Kheirie personally, such as willingness to
+    relocate or work preferences.
+
+- question: "How many students did Kheirie teach at Teach For Lebanon?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    Near miss: the corpus gives the subjects (mathematics, computer) and
+    grades (1-6), but not the number of students. May cite the fellow role
+    for context. Do not estimate a class size.
+
