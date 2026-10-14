@@ -9,7 +9,7 @@ employment_type: work-study (alternance)
 location: Paris, France
 date_range: 2023-10 to 2025-10
 sources:
-  - CV (2026)
+  - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
 section_sources:
   about-quantcube-technology:

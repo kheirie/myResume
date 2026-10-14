@@ -8,7 +8,8 @@ degree: MA by Research, Department of Social Sciences
 location: Akureyri, Iceland
 date_range: 2017-09 to 2019-02
 sources:
-  - CV (2026)
+  - CV, Data Science version (2026)
+  - CV, Learning & Development version (2026)
   - Clarifications from Kheirie (2026-10-12)
 open_questions: []
 ---
@@ -17,7 +18,7 @@ open_questions: []
 Kheirie completed an MA by Research in the Department of Social Sciences at the University of Akureyri in Akureyri, Iceland, from September 2017 to February 2019.
 
 ## MA research topic: Syrian students in Icelandic schools
-For the MA by Research at the University of Akureyri, Kheirie's research topic was "Syrian Students in Icelandic Schools".
+For the MA by Research at the University of Akureyri, Kheirie's research topic was "Syrian Students in Icelandic Schools". It was qualitative research, which included conducting and analyzing interviews.
 
 ## Publication from the MA research: Routledge chapter
 Kheirie's MA research on Syrian students in Icelandic schools led to a book chapter, which Kheirie co-authored as first author with H. Gunnþórsdóttir and M. Meckl. Citation: El Hariri, K., Gunnþórsdóttir, H., & Meckl, M. (2020). Syrian students at the arctic circle in Iceland. In N. Yeasmin, W. Hasanat, J. Brzozowski & S. Kirchner (Eds.), Immigration in the Circumpolar North: Integration and Resilience (pp. 30–55). Routledge. https://doi.org/10.4324/9780429344275

@@ -9,7 +9,7 @@ employment_type: interim (temporary placement)
 location: Chilly-Mazarin, France
 date_range: 2021-11 to 2022-03
 sources:
-  - CV (2026)
+  - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
 section_sources:
   about-sanofi:

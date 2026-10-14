@@ -8,7 +8,7 @@ degree: Applied MSc in Data Science & Artificial Intelligence
 location: Paris, France
 date_range: 2023-09 to 2025-12
 sources:
-  - CV (2026)
+  - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
 open_questions: []
 ---

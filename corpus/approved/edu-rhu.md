@@ -8,7 +8,7 @@ degree: MSc and BSc in Computer & Communication Engineering
 location: Mechref, Lebanon
 date_range: 2008-09 to 2013-12
 sources:
-  - CV (2026)
+  - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
 open_questions: []
 ---
