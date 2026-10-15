@@ -31,6 +31,11 @@ def normalize(vectors: np.ndarray) -> np.ndarray:
     return vectors / np.where(norms == 0, 1, norms)
 
 
+def default_cache_dir() -> str:
+    # fastembed defaults to /tmp, which WSL clears on restart.
+    return os.environ.get("FASTEMBED_CACHE_PATH", str(Path.home() / ".cache" / "fastembed"))
+
+
 class FastEmbedEmbedder:
     """BGE embeddings via fastembed (ONNX runtime, CPU, no PyTorch)."""
 
@@ -38,11 +43,7 @@ class FastEmbedEmbedder:
         # Imported here, not at the top: it is slow to import and unit tests never need it.
         from fastembed import TextEmbedding
 
-        # fastembed defaults to /tmp, which WSL clears on restart.
-        cache_dir = cache_dir or os.environ.get(
-            "FASTEMBED_CACHE_PATH", str(Path.home() / ".cache" / "fastembed")
-        )
-        self._model = TextEmbedding(model_name, cache_dir=cache_dir)
+        self._model = TextEmbedding(model_name, cache_dir=cache_dir or default_cache_dir())
 
     def embed_passages(self, texts: list[str]) -> np.ndarray:
         vectors = np.array(list(self._model.passage_embed(texts)), dtype=np.float32)

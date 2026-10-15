@@ -6,7 +6,7 @@ import pytest
 
 from resumebot.corpus import Chunk
 from resumebot.embeddings import normalize
-from resumebot.retrieval import Retriever, text_for_embedding
+from resumebot.retrieval import ABSTAIN_BELOW, Retriever, SearchResult, remove_subject_name, text_for_embedding
 
 
 class FakeEmbedder:
@@ -55,18 +55,18 @@ def test_normalize_gives_unit_length_and_leaves_zero_vectors_alone():
 
 
 def test_best_match_comes_first(retriever):
-    hits = retriever.search("BERT sentiment analysis", k=3)
+    hits = retriever.search("BERT sentiment analysis", k=3).hits
     assert hits[0].chunk.id == "exp-c#sentiment"
 
 
 def test_results_are_sorted_by_score_and_limited_to_k(retriever):
-    hits = retriever.search("Kheirie", k=2)
+    hits = retriever.search("data pipelines", k=2).hits
     assert len(hits) == 2
     assert hits[0].score >= hits[1].score
 
 
 def test_k_larger_than_corpus_returns_every_chunk(retriever):
-    assert len(retriever.search("anything", k=10)) == len(CHUNKS)
+    assert len(retriever.search("anything", k=10).hits) == len(CHUNKS)
 
 
 def test_k_below_one_is_rejected(retriever):
@@ -81,7 +81,62 @@ def test_empty_corpus_is_rejected():
 
 def test_title_and_heading_are_embedded_with_the_text():
     chunk = make_chunk("exp-s", "Pipelines", "Kheirie built pipelines.", title="NLP Data Scientist, Sanofi")
-    assert text_for_embedding(chunk) == "NLP Data Scientist, Sanofi\nPipelines\nKheirie built pipelines."
+    assert text_for_embedding(chunk) == "NLP Data Scientist, Sanofi\nPipelines\nbuilt pipelines."
     other = make_chunk("exp-o", "Pipelines", "Kheirie built pipelines.", title="Data Scientist, Other Corp")
-    hits = Retriever([other, chunk], FakeEmbedder()).search("Sanofi", k=1)
+    hits = Retriever([other, chunk], FakeEmbedder()).search("Sanofi", k=1).hits
     assert hits[0].chunk.id == "exp-s#pipelines"  # only the title mentions Sanofi
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("Has Kheirie built RAG systems?", "Has built RAG systems?"),
+        ("What is Kheirie's salary?", "What is salary?"),
+        ("Kheirie El Hariri", ""),
+        ("No name here", "No name here"),
+    ],
+)
+def test_remove_subject_name(text, expected):
+    assert remove_subject_name(text) == expected
+
+
+def test_name_alone_does_not_decide_ranking():
+    named = make_chunk("exp-n", "Nationality", "Kheirie has French nationality.")
+    relevant = make_chunk("exp-g", "Grant", "received a regional development grant.")
+    hits = Retriever([named, relevant], FakeEmbedder()).search("Has Kheirie received a grant?", k=1).hits
+    assert hits[0].chunk.id == "exp-g#grant"
+
+
+class FakeReranker:
+    """Scores a text by how often it contains one chosen word."""
+
+    def __init__(self, favourite: str):
+        self.favourite = favourite
+
+    def score(self, query, texts):
+        return [float(t.lower().count(self.favourite)) for t in texts]
+
+
+def test_reranker_reorders_candidates_but_keeps_similarity_scores():
+    plain = Retriever(CHUNKS, FakeEmbedder()).search("BERT sentiment analysis", k=3)
+    reranked = Retriever(CHUNKS, FakeEmbedder(), reranker=FakeReranker("mathematics")).search(
+        "BERT sentiment analysis", k=3
+    )
+    assert plain.hits[0].chunk.id == "exp-c#sentiment"
+    assert reranked.hits[0].chunk.id == "exp-b#teaching"  # the reranker's choice wins the order
+    by_id = {h.chunk.id: h.score for h in plain.hits}
+    assert all(h.score == by_id[h.chunk.id] for h in reranked.hits)  # similarity is unchanged
+    assert reranked.hits[0].rerank_score == 1.0
+
+
+def test_top_similarity_ignores_the_reranker():
+    plain = Retriever(CHUNKS, FakeEmbedder()).search("BERT sentiment analysis")
+    reranked = Retriever(CHUNKS, FakeEmbedder(), reranker=FakeReranker("mathematics")).search(
+        "BERT sentiment analysis"
+    )
+    assert reranked.top_similarity == plain.top_similarity
+
+
+@pytest.mark.parametrize("similarity, abstain", [(ABSTAIN_BELOW - 0.01, True), (ABSTAIN_BELOW, False)])
+def test_should_abstain_below_threshold(similarity, abstain):
+    assert SearchResult(hits=[], top_similarity=similarity).should_abstain is abstain
