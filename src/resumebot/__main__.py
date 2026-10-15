@@ -26,6 +26,24 @@ def search(question: str, k: int, rerank: bool) -> None:
         print(f"{rank}. similarity {hit.score:.3f}{rerank_note}  {hit.chunk.id}")
 
 
+def ask(question: str) -> None:
+    import time
+
+    from resumebot.answering import Answerer
+    from resumebot.llm import OpenAICompatibleLLM
+
+    llm = OpenAICompatibleLLM()
+    answerer = Answerer(build_retriever(), llm)
+    start = time.perf_counter()
+    answer = answerer.ask(question)
+    print(answer.text)
+    for chunk in answer.citations:
+        print(f"  [{chunk.id}] {'; '.join(chunk.sources)}")
+    if answer.dropped_citations:
+        print(f"  (dropped invented citations: {', '.join(answer.dropped_citations)})")
+    print(f"\n{answer.outcome} | {llm.settings.model} | {time.perf_counter() - start:.1f}s")
+
+
 def eval_retrieval(rerank: bool) -> None:
     from resumebot.evaluation import load_golden, report, run
 
@@ -39,6 +57,8 @@ def main() -> None:
     search_cmd = commands.add_parser("search", help="show the chunks retrieved for a question")
     search_cmd.add_argument("question")
     search_cmd.add_argument("-k", type=int, default=4, help="number of chunks to return")
+    ask_cmd = commands.add_parser("ask", help="answer a question with citations")
+    ask_cmd.add_argument("question")
     eval_cmd = commands.add_parser("eval-retrieval", help="measure retrieval against evals/golden.yaml")
     for cmd in (search_cmd, eval_cmd):
         cmd.add_argument("--no-rerank", action="store_true", help="skip the cross-encoder stage")
@@ -46,6 +66,8 @@ def main() -> None:
 
     if args.command == "search":
         search(args.question, args.k, rerank=not args.no_rerank)
+    elif args.command == "ask":
+        ask(args.question)
     elif args.command == "eval-retrieval":
         eval_retrieval(rerank=not args.no_rerank)
 

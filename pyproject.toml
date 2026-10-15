@@ -11,6 +11,9 @@ requires-python = ">=3.11"
 dependencies = [
     "fastembed>=0.9,<1",
     "numpy>=2",
+    "openai>=1.40",
+    "pydantic>=2",
+    "python-dotenv>=1",
     "pyyaml>=6",
 ]
 
