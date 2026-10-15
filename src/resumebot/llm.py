@@ -20,8 +20,24 @@ SECRETS_FILE = Path("raw/secrets.env")
 DEFAULT_CHAIN = "groq,huggingface,ollama"
 
 
+@dataclass(frozen=True)
+class Usage:
+    """Tokens used by one or more LLM calls."""
+
+    prompt_tokens: int = 0  # what we send: system prompt + context + question
+    completion_tokens: int = 0  # what the model writes, including hidden reasoning
+
+    @property
+    def total_tokens(self) -> int:
+        return self.prompt_tokens + self.completion_tokens
+
+    def __add__(self, other: Usage) -> Usage:
+        return Usage(self.prompt_tokens + other.prompt_tokens, self.completion_tokens + other.completion_tokens)
+
+
 class LLM(Protocol):
     label: str
+    last_usage: Usage | None  # tokens used by the most recent call
 
     def complete_json(self, system: str, user: str) -> str:
         """Return the model's reply, asked to be a single JSON object.
@@ -93,6 +109,8 @@ class OpenAICompatibleLLM:
 
         self.settings = settings or LLMSettings.for_provider()
         self.label = f"{self.settings.provider}:{self.settings.model}"
+        self.last_usage: Usage | None = None
+        self.rate_limit: dict[str, str] = {}  # latest x-ratelimit-* headers, if the provider sends them
         # The client waits and retries on HTTP 429 (rate limit) and 5xx errors.
         self._client = OpenAI(
             base_url=self.settings.base_url,
@@ -105,7 +123,7 @@ class OpenAICompatibleLLM:
         from openai import APIError
 
         try:
-            response = self._client.chat.completions.create(
+            raw = self._client.chat.completions.with_raw_response.create(
                 model=self.settings.model,
                 messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
                 temperature=0,  # same question, same answer: needed for trust and for evals
@@ -113,6 +131,10 @@ class OpenAICompatibleLLM:
             )
         except APIError as err:  # every error the API client can raise
             raise LLMUnavailable(f"{self.label}: {type(err).__name__}") from err
+        response = raw.parse()
+        usage = response.usage
+        self.last_usage = Usage(usage.prompt_tokens, usage.completion_tokens) if usage else None
+        self.rate_limit = {k: v for k, v in raw.headers.items() if k.lower().startswith("x-ratelimit")}
         return response.choices[0].message.content or ""
 
 
@@ -129,6 +151,8 @@ class FallbackLLM:
         self._llms = llms
         self.label = "chain(" + " > ".join(llm.label for llm in llms) + ")"
         self.last_used: str | None = None  # which provider produced the latest reply
+        self.last_usage: Usage | None = None
+        self.rate_limit: dict[str, str] = {}
         self.failures: list[str] = []  # providers that failed during the latest call
 
     def complete_json(self, system: str, user: str) -> str:
@@ -140,6 +164,8 @@ class FallbackLLM:
                 self.failures.append(str(err))
                 continue
             self.last_used = llm.label
+            self.last_usage = getattr(llm, "last_usage", None)
+            self.rate_limit = getattr(llm, "rate_limit", {})
             return reply
         self.last_used = None
         raise LLMUnavailable("every provider failed: " + "; ".join(self.failures))

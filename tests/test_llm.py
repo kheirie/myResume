@@ -1,6 +1,6 @@
 import pytest
 
-from resumebot.llm import FallbackLLM, LLMConfigError, LLMSettings, LLMUnavailable, build_llm
+from resumebot.llm import FallbackLLM, LLMConfigError, LLMSettings, LLMUnavailable, Usage, build_llm
 
 
 @pytest.fixture(autouse=True)
@@ -56,6 +56,7 @@ class FakeProvider:
         self.label = label
         self.reply = reply
         self.calls = 0
+        self.last_usage = Usage(100, 10) if reply is not None else None
 
     def complete_json(self, system, user):
         self.calls += 1
@@ -85,3 +86,13 @@ def test_chain_skips_providers_without_a_key(monkeypatch):
     monkeypatch.setenv("HF_TOKEN", "hf-test")  # no GROQ_API_KEY
     chain = build_llm("chain")
     assert chain.label == "chain(huggingface:openai/gpt-oss-120b > ollama:llama3.1:8b)"
+
+
+def test_fallback_reports_the_usage_of_the_provider_that_answered():
+    chain = FallbackLLM([FakeProvider("groq"), FakeProvider("hf", "{}")])
+    chain.complete_json("s", "u")
+    assert chain.last_usage == Usage(100, 10)
+
+
+def test_usage_adds_up():
+    assert Usage(1, 2) + Usage(10, 20) == Usage(11, 22)

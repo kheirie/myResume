@@ -97,3 +97,16 @@ def test_answer_report_shows_each_answer_next_to_its_notes():
     report = answer_report([answer_result(True, True, cited=["d#s"])], "test-model")
     assert "# Answer evaluation: test-model" in report
     assert "- notes: a note" in report
+
+
+def test_answer_summary_reports_token_totals():
+    from resumebot.llm import Usage
+
+    golden = GoldenItem("Q?", True, ("d#s",), "all", None, "")
+    results = [
+        AnswerResult(golden, Answer("t", True, [], "answered", usage=Usage(1000, 100)), 1.0),
+        AnswerResult(golden, Answer("t", True, [], "answered", usage=Usage(1200, 300)), 1.0),
+    ]
+    summary = answer_summary(results)
+    assert "2 LLM answers: 2200 in + 400 out = 2600 total" in summary
+    assert "mean per answer: 1100 in + 200 out" in summary

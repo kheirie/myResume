@@ -12,7 +12,7 @@ from resumebot.answering import (
     resolve_citations,
 )
 from resumebot.corpus import Chunk
-from resumebot.llm import LLMUnavailable
+from resumebot.llm import LLMUnavailable, Usage
 from resumebot.retrieval import ABSTAIN_BELOW, Hit, SearchResult
 
 
@@ -36,12 +36,15 @@ class FakeLLM:
 
     label = "fake:model"
 
-    def __init__(self, *replies):
+    def __init__(self, *replies, usage_per_call=None):
         self.replies = list(replies)
         self.calls = []
+        self.usage_per_call = usage_per_call
+        self.last_usage = None
 
     def complete_json(self, system, user):
         self.calls.append((system, user))
+        self.last_usage = self.usage_per_call
         reply = self.replies.pop(0)
         if isinstance(reply, Exception):
             raise reply
@@ -118,7 +121,7 @@ def test_user_message_includes_title_and_heading():
 
 @pytest.mark.parametrize(
     "rule",
-    ["only facts stated in the CONTEXT", "Never invent anything", "untrusted user", "third person", "general knowledge"],
+    ["only the CONTEXT", "Never invent anything", "untrusted user", "third person", "she/her", "As general information"],
 )
 def test_system_prompt_states_the_core_rules(rule):
     assert rule in SYSTEM_PROMPT
@@ -150,3 +153,15 @@ def test_file_citation_for_a_file_that_was_not_retrieved_is_dropped():
 def test_overlapping_citations_are_not_duplicated():
     valid, _ = resolve_citations(["exp-a#one", "exp-a"], [chunk("exp-a#one"), chunk("exp-a#two")])
     assert [c.id for c in valid] == ["exp-a#one", "exp-a#two"]
+
+
+def test_answer_reports_tokens_including_retries():
+    llm = FakeLLM("not json", reply(), usage_per_call=Usage(1000, 50))
+    answer = Answerer(FakeRetriever(), llm).ask("Grants?")
+    assert answer.usage == Usage(2000, 100)  # the failed attempt also cost tokens
+    assert answer.usage.total_tokens == 2100
+
+
+def test_retrieval_abstention_costs_no_tokens():
+    answer = Answerer(FakeRetriever(top_similarity=ABSTAIN_BELOW - 0.1), FakeLLM()).ask("Rust?")
+    assert answer.usage is None

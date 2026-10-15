@@ -179,6 +179,7 @@ def answer_summary(results: list[AnswerResult]) -> str:
     for r in results:
         outcomes[r.answer.outcome] = outcomes.get(r.answer.outcome, 0) + 1
     seconds = [r.seconds for r in results]
+    usages = [r.answer.usage for r in results if r.answer.usage is not None]
 
     lines = [
         "ANSWER OUTCOMES",
@@ -191,6 +192,7 @@ def answer_summary(results: list[AnswerResult]) -> str:
         "OUTCOME COUNTS",
         *(f"  {name:<20} {count}" for name, count in sorted(outcomes.items())),
         f"LATENCY  mean {sum(seconds) / len(seconds):.1f}s   max {max(seconds):.1f}s",
+        *_token_lines(usages),
         "WRONG OUTCOMES",
         *(
             f"  - [{'should answer' if r.item.answerable else 'should decline'}] {r.item.question}"
@@ -199,6 +201,18 @@ def answer_summary(results: list[AnswerResult]) -> str:
         ),
     ]
     return "\n".join(lines)
+
+
+def _token_lines(usages: list) -> list[str]:
+    if not usages:
+        return ["TOKENS   not reported by the provider"]
+    n = len(usages)
+    prompt = sum(u.prompt_tokens for u in usages)
+    completion = sum(u.completion_tokens for u in usages)
+    return [
+        f"TOKENS   {n} LLM answers: {prompt} in + {completion} out = {prompt + completion} total",
+        f"         mean per answer: {prompt / n:.0f} in + {completion / n:.0f} out",
+    ]
 
 
 def answer_report(results: list[AnswerResult], model: str) -> str:
@@ -210,7 +224,8 @@ def answer_report(results: list[AnswerResult], model: str) -> str:
         out += [
             f"## {n}. {r.item.question}",
             f"**{mark}** · expected: {kind} · got: `{r.answer.outcome}` · {r.seconds:.1f}s"
-            f" · by {r.answer.answered_by or 'retrieval'}",
+            f" · by {r.answer.answered_by or 'retrieval'}"
+            + (f" · {r.answer.usage.prompt_tokens}+{r.answer.usage.completion_tokens} tokens" if r.answer.usage else ""),
             "",
             f"> {r.answer.text}",
             "",

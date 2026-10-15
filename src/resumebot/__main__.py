@@ -42,6 +42,12 @@ def ask(question: str, provider: str | None) -> None:
     if answer.dropped_citations:
         print(f"  (dropped invented citations: {', '.join(answer.dropped_citations)})")
     print(f"\n{answer.outcome} | {answer.answered_by or 'no LLM call'} | {time.perf_counter() - start:.1f}s")
+    if answer.usage:
+        u = answer.usage
+        print(f"tokens: {u.prompt_tokens} in + {u.completion_tokens} out = {u.total_tokens}")
+    remaining = getattr(llm, "rate_limit", {}).get("x-ratelimit-remaining-tokens")
+    if remaining:
+        print(f"rate limit: {remaining} tokens left this minute")
 
 
 def eval_answers(provider: str | None) -> None:
