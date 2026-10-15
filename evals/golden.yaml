@@ -303,9 +303,11 @@
   expected_sources:
     - about#interests-writing
   notes: >-
-    Expected: writing is one of Kheirie's interests, and Kheirie publishes
-    articles on Medium at https://medium.com/@kheirie. The corpus does not yet
-    contain the articles themselves, so do not invent article topics or titles.
+    Expected: writing is one of Kheirie's interests; Kheirie publishes
+    articles on Medium (https://medium.com/@kheirie) explaining topics such as
+    large language models, the Transformer architecture, and deep learning
+    foundations. Article citations are welcome. Do not invent article titles
+    or topics that are not in the corpus.
 
 - question: "Has Kheirie received any grants or awards?"
   answerable: true
@@ -409,12 +411,11 @@
   expected_sources:
     - exp-braincities#job-matching-project-for-enel
   notes: >-
-    Tricky case: team split. Expected: partly. A software engineer extracted
-    the O*NET and ESCO data; Kheirie web-scraped job pages for job
-    descriptions and examples and fine-tuned the Sentence-BERT matching
-    model. The corpus does not say who prepared ENEL's Excel data. Do not
-    credit Kheirie with extracting the O*NET and ESCO data, and do not guess
-    who handled ENEL's data.
+    Tricky case: team split. Expected: no. Kheirie did not do the data
+    engineering and did not extract ENEL's data; a software engineer extracted
+    the O*NET and ESCO data. Kheirie's data work was web-scraping job pages
+    for job descriptions and examples, and Kheirie fine-tuned the Sentence-BERT
+    matching model. Do not credit Kheirie with data engineering or extraction.
 
 - question: "Does Kheirie need visa sponsorship to work in France?"
   answerable: true
