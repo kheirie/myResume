@@ -30,13 +30,13 @@ SUBJECT_NAME = re.compile(r"\b(?:Kheirie(?:'s)?|El Hariri)\b")
 
 
 # Abstain without calling the LLM when the best chunk scores below this.
-# It is only a cheap, deterministic safety net: the LLM (M4) is the main judge
-# of whether the retrieved chunks contain the answer. Golden set, 2026-10-15:
-# answerable questions score 0.583 and up; off-topic ones 0.486-0.581. At 0.50
-# no answerable question is blocked and only clearly unrelated questions (the
-# phone/address one, 0.486) stop here. Near misses (0.61+) always pass through.
-# Kheirie's choice; revisit with the with/without-threshold comparison in M5.
-ABSTAIN_BELOW = 0.50
+# A cheap, deterministic safety net; the LLM is the main judge of whether the
+# retrieved chunks contain the answer. Golden set, 2026-10-15: answerable
+# questions score 0.583 and up; off-topic ones 0.486-0.581. At 0.55 no
+# answerable question is blocked and 3 of 4 off-topic questions stop here,
+# including "earliest start date", which the 8B model answered with a made-up
+# date (prompt v1/v2) when the threshold was 0.50. Kheirie's choice.
+ABSTAIN_BELOW = 0.55
 
 
 def remove_subject_name(text: str) -> str:

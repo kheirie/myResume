@@ -9,11 +9,13 @@ Two questions, answered with numbers rather than impressions:
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
 
+from resumebot.answering import Answer, Answerer
 from resumebot.retrieval import Retriever, SearchResult
 
 
@@ -24,6 +26,7 @@ class GoldenItem:
     expected_sources: tuple[str, ...] = ()
     match: str = "all"  # "all": every expected source must be retrieved; "any": one is enough
     abstain_type: str | None = None  # "off_topic" or "near_miss" for unanswerable items
+    notes: str = ""  # what a good answer must and must not say
 
 
 def load_golden(path: Path) -> list[GoldenItem]:
@@ -35,6 +38,7 @@ def load_golden(path: Path) -> list[GoldenItem]:
             expected_sources=tuple(i.get("expected_sources", [])),
             match=i.get("match", "all"),
             abstain_type=i.get("abstain_type"),
+            notes=i.get("notes", "").strip(),
         )
         for i in items
     ]
@@ -131,3 +135,91 @@ def report(results: list[Result], ks: list[int], thresholds: list[float]) -> str
             f"                         {o[0]:>2}/{o[1]:<2}              {n[0]:>2}/{n[1]}"
         )
     return "\n".join(lines)
+
+
+# --- Answer evaluation (M5) ------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class AnswerResult:
+    item: GoldenItem
+    answer: Answer
+    seconds: float
+
+    @property
+    def outcome_correct(self) -> bool:
+        """Answerable questions should be answered; the rest should be declined."""
+        return self.answer.answerable == self.item.answerable
+
+    @property
+    def cited_ids(self) -> list[str]:
+        return [c.id for c in self.answer.citations]
+
+
+def run_answers(answerer: Answerer, items: list[GoldenItem]) -> list[AnswerResult]:
+    results = []
+    for item in items:
+        start = time.perf_counter()
+        answer = answerer.ask(item.question)
+        results.append(AnswerResult(item, answer, time.perf_counter() - start))
+    return results
+
+
+def answer_summary(results: list[AnswerResult]) -> str:
+    def group(test):
+        return [r for r in results if test(r.item)]
+
+    answerable = group(lambda i: i.answerable)
+    off_topic = group(lambda i: i.abstain_type == "off_topic")
+    near_miss = group(lambda i: i.abstain_type == "near_miss")
+    answered = [r for r in answerable if r.answer.answerable]
+    cited_ok = [r for r in answered if is_hit(r.item, r.cited_ids)]
+    dropped = sum(len(r.answer.dropped_citations) for r in results)
+    outcomes: dict[str, int] = {}
+    for r in results:
+        outcomes[r.answer.outcome] = outcomes.get(r.answer.outcome, 0) + 1
+    seconds = [r.seconds for r in results]
+
+    lines = [
+        "ANSWER OUTCOMES",
+        f"  answerable questions answered:   {len(answered)}/{len(answerable)}",
+        f"  off-topic questions declined:    {sum(r.outcome_correct for r in off_topic)}/{len(off_topic)}",
+        f"  near-miss questions declined:    {sum(r.outcome_correct for r in near_miss)}/{len(near_miss)}",
+        "CITATIONS",
+        f"  answered with expected sources:  {len(cited_ok)}/{len(answered)}",
+        f"  invented citations dropped:      {dropped}",
+        "OUTCOME COUNTS",
+        *(f"  {name:<20} {count}" for name, count in sorted(outcomes.items())),
+        f"LATENCY  mean {sum(seconds) / len(seconds):.1f}s   max {max(seconds):.1f}s",
+        "WRONG OUTCOMES",
+        *(
+            f"  - [{'should answer' if r.item.answerable else 'should decline'}] {r.item.question}"
+            for r in results
+            if not r.outcome_correct
+        ),
+    ]
+    return "\n".join(lines)
+
+
+def answer_report(results: list[AnswerResult], model: str) -> str:
+    """Markdown for human review: each answer next to the golden notes."""
+    out = [f"# Answer evaluation: {model}", "", "```", answer_summary(results), "```", ""]
+    for n, r in enumerate(results, start=1):
+        mark = "OK" if r.outcome_correct else "WRONG OUTCOME"
+        kind = "answerable" if r.item.answerable else r.item.abstain_type
+        out += [
+            f"## {n}. {r.item.question}",
+            f"**{mark}** · expected: {kind} · got: `{r.answer.outcome}` · {r.seconds:.1f}s"
+            f" · by {r.answer.answered_by or 'retrieval'}",
+            "",
+            f"> {r.answer.text}",
+            "",
+            f"- cited: {', '.join(f'`{c}`' for c in r.cited_ids) or 'none'}",
+            f"- expected: {', '.join(f'`{c}`' for c in r.item.expected_sources) or 'none'}",
+        ]
+        if r.answer.dropped_citations:
+            out.append(f"- dropped (invented): {', '.join(r.answer.dropped_citations)}")
+        if r.item.notes:
+            out.append(f"- notes: {r.item.notes}")
+        out.append("")
+    return "\n".join(out)
