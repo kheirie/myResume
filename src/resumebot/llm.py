@@ -1,6 +1,6 @@
 """One client for any OpenAI-compatible chat API, plus a fallback chain.
 
-Ollama (local), Groq and Hugging Face Inference Providers all speak the OpenAI
+Ollama (local), Groq, OpenRouter and Hugging Face Inference Providers all speak the OpenAI
 chat API, so a provider is just a base URL, a model name, and a key. Settings
 live in `.env`; keys live in `raw/secrets.env`. `--provider` picks one per run,
 or "chain" tries several in order when one is rate-limited or down.
@@ -15,9 +15,9 @@ from typing import Protocol
 
 from dotenv import load_dotenv
 
-PROVIDERS = ("ollama", "groq", "huggingface")
+PROVIDERS = ("ollama", "groq", "openrouter", "huggingface")
 SECRETS_FILE = Path("raw/secrets.env")
-DEFAULT_CHAIN = "groq,huggingface,ollama"
+DEFAULT_CHAIN = "groq,openrouter,huggingface,ollama"
 
 
 @dataclass(frozen=True)
@@ -84,6 +84,15 @@ class LLMSettings:
                 base_url="https://api.groq.com/openai/v1",
                 model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
                 api_key=_require_key("GROQ_API_KEY"),
+            )
+        if provider == "openrouter":
+            return cls(
+                provider="openrouter",
+                base_url="https://openrouter.ai/api/v1",
+                # gpt-oss-120b is no longer free on OpenRouter (2026-10-16). Nemotron passed spot checks
+                # (exact scope, declines what is not documented) but has not had a full eval.
+                model=os.environ.get("OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free"),
+                api_key=_require_key("OPENROUTER_API_KEY"),
             )
         if provider == "huggingface":
             return cls(

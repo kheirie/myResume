@@ -90,7 +90,7 @@ def main() -> None:
     for cmd in (ask_cmd, answers_cmd):
         cmd.add_argument(
             "--provider",
-            choices=["ollama", "groq", "huggingface", "chain"],
+            choices=["ollama", "groq", "openrouter", "huggingface", "chain"],
             help="LLM to use; 'chain' tries LLM_FALLBACK_ORDER in turn (default: LLM_PROVIDER or ollama)",
         )
     eval_cmd = commands.add_parser("eval-retrieval", help="measure retrieval against evals/golden.yaml")

@@ -51,6 +51,20 @@ def test_huggingface_uses_the_router_and_the_same_model_as_groq(monkeypatch):
     assert settings.model == "openai/gpt-oss-120b"
 
 
+def test_openrouter_uses_a_free_model_by_default(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-test")
+    settings = LLMSettings.for_provider("openrouter")
+    assert settings.base_url == "https://openrouter.ai/api/v1"
+    assert settings.model == "nvidia/nemotron-3-super-120b-a12b:free"
+    assert settings.api_key == "sk-or-test"
+
+
+def test_openrouter_without_a_key_fails_with_a_clear_message(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with pytest.raises(LLMConfigError, match="OPENROUTER_API_KEY is not set"):
+        LLMSettings.for_provider("openrouter")
+
+
 class FakeProvider:
     def __init__(self, label, reply=None):
         self.label = label
