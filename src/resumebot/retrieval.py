@@ -26,7 +26,8 @@ from resumebot.reranking import Reranker
 # carries no information for ranking (like a word with zero IDF). Left in, it
 # dominates short chunks: "Kheirie has French nationality." matched salary,
 # grant, and supervision questions. Removing it raised hit@4 from 64% to 79%.
-SUBJECT_NAME = re.compile(r"\b(?:Kheirie(?:'s)?|El Hariri)\b")
+# Case-insensitive: "tell me about kheirie" skipped the overview route and retrieved trivia.
+SUBJECT_NAME = re.compile(r"\b(?:Kheirie(?:['\u2019]s)?|El Hariri)\b", re.IGNORECASE)
 
 
 # Abstain without calling the LLM when the best chunk scores below this.

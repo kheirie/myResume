@@ -103,6 +103,10 @@ def test_title_and_heading_are_embedded_with_the_text():
         ("What is Kheirie's salary?", "What is salary?"),
         ("Kheirie El Hariri", ""),
         ("No name here", "No name here"),
+        ("tell me about kheirie", "tell me about"),  # recruiters often type in lowercase
+        ("What are KHEIRIE's skills?", "What are skills?"),
+        ("What is Kheirie’s salary?", "What is salary?"),  # curly apostrophe from phones and Word
+        ("kheirie el hariri", ""),
     ],
 )
 def test_remove_subject_name(text, expected):
@@ -153,7 +157,7 @@ def test_should_abstain_below_threshold(similarity, abstain):
 
 @pytest.mark.parametrize(
     "question",
-    ["Tell me about Kheirie", "Who is Kheirie?", "Tell me about Kheirie's background", "Kheirie"],
+    ["Tell me about Kheirie", "Who is Kheirie?", "Tell me about Kheirie's background", "Kheirie", "tell me about kheirie"],
 )
 def test_questions_with_no_topic_become_an_overview_query(question):
     assert expand_overview_query(remove_subject_name(question)) == OVERVIEW_QUERY
