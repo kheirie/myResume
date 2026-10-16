@@ -168,3 +168,65 @@ def test_overview_sections_exist_in_the_real_corpus():
 
     ids = {c.id for c in load_corpus(ROOT / "corpus" / "approved")}
     assert set(OVERVIEW_CHUNK_IDS) <= ids  # renaming a profile heading must update the overview route
+
+
+# The about.md summary sections repeat facts from the role files so that list questions retrieve
+# one complete chunk. Each phrase must appear in both chunks: editing one side alone fails here.
+SUMMARY_FACTS = [
+    ("about#data-science-roles", "exp-quantcube#role-overview", "Junior Data Scientist"),
+    ("about#data-science-roles", "exp-quantcube#role-overview", "October 2023 to October 2025"),
+    ("about#data-science-roles", "exp-sanofi#role-overview", "NLP Data Scientist"),
+    ("about#data-science-roles", "exp-sanofi#role-overview", "November 2021 to March 2022"),
+    ("about#data-science-roles", "exp-sanofi#role-overview", "research and development (R&D) NLP team"),
+    ("about#data-science-roles", "exp-braincities#role-overview", "Braincities Lab in Paris, France"),
+    ("about#data-science-roles", "exp-braincities#role-overview", "August 2020 to August 2021"),
+    ("about#nlp-projects", "exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis", "within the NLP team"),
+    ("about#nlp-projects", "exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis", "80% correlation with the official Egyptian PMI"),
+    ("about#nlp-projects", "exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis", "88% correlation with the official Saudi Arabian PMI"),
+    ("about#nlp-projects", "exp-quantcube#agentic-rag-research-tool-for-explaining-indicators", "within the NLP team"),
+    ("about#nlp-projects", "exp-sanofi#extractive-summarization-of-medicine-and-drug-documents", "ROUGE-1 score of 47%"),
+    ("about#nlp-projects", "exp-sanofi#extractive-summarization-of-medicine-and-drug-documents", "ROUGE-2 score of 25%"),
+    ("about#nlp-projects", "exp-braincities#job-matching-project-for-enel", "NLP-based"),
+    ("about#nlp-projects", "exp-braincities#job-matching-project-for-enel", "90% accuracy"),
+    ("about#teaching-coaching-and-education-roles", "exp-tfl-fellow#role-overview", "July 2014 to July 2016"),
+    ("about#teaching-coaching-and-education-roles", "exp-tfl-fellow#teaching-mathematics-and-computer-subjects-in-primary-school", "Grades 1 to 6"),
+    ("about#teaching-coaching-and-education-roles", "exp-tfl-mentor#role-overview", "October to December 2016"),
+    ("about#teaching-coaching-and-education-roles", "exp-tfl-mentor#coaching-and-supervising-teaching-fellows", "13 teaching fellows"),
+    ("about#teaching-coaching-and-education-roles", "exp-simey#role-overview", "September to October 2017"),
+    ("about#teaching-coaching-and-education-roles", "exp-simey#english-course-design-for-syrian-refugee-learners", "9 Syrian refugee learners"),
+    ("about#teaching-coaching-and-education-roles", "exp-akureyri-curriculum#role-overview", "July 2026"),
+    ("about#teaching-coaching-and-education-roles", "exp-akureyri-curriculum#designing-masters-level-ai-courses", "still in development"),
+    ("about#degrees", "edu-dsti#applied-msc-in-data-science-artificial-intelligence", "Applied MSc in Data Science & Artificial Intelligence"),
+    ("about#degrees", "edu-dsti#applied-msc-in-data-science-artificial-intelligence", "September 2023 to December 2025"),
+    ("about#degrees", "edu-akureyri#ma-by-research-in-social-sciences", "University of Akureyri"),
+    ("about#degrees", "edu-akureyri#ma-by-research-in-social-sciences", "September 2017 to February 2019"),
+    ("about#degrees", "edu-rhu#bsc-and-msc-in-computer-communication-engineering", "January 2012 to December 2013"),
+    ("about#degrees", "edu-rhu#bsc-and-msc-in-computer-communication-engineering", "September 2008 to December 2011"),
+]
+
+
+@pytest.mark.parametrize("summary_id, source_id, phrase", SUMMARY_FACTS)
+def test_summary_sections_match_their_source_sections(summary_id, source_id, phrase):
+    by_id = {c.id: c.text for c in load_corpus(ROOT / "corpus" / "approved")}
+    assert phrase in by_id[summary_id], f"{phrase!r} missing from {summary_id}"
+    assert phrase in by_id[source_id], f"{phrase!r} missing from {source_id}"
+
+
+# Kheirie's rule (2026-10-16): career answers go from the most recent role to the oldest. Models
+# copy the order they read, so the summary sections are written in that order too.
+NEWEST_FIRST = [
+    ("about#data-science-roles", ["QuantCube Technology", "Sanofi", "Braincities Lab"]),
+    ("about#nlp-projects", ["QuantCube Technology", "Sanofi", "Braincities Lab"]),
+    (
+        "about#teaching-coaching-and-education-roles",
+        ["University of Akureyri", "SÍMEY", "Temporary Educational Mentor", "a Fellow from July 2014"],
+    ),
+    ("about#degrees", ["September 2023", "September 2017", "January 2012", "September 2008"]),
+]
+
+
+@pytest.mark.parametrize("summary_id, newest_to_oldest", NEWEST_FIRST)
+def test_summary_sections_list_the_most_recent_role_first(summary_id, newest_to_oldest):
+    text = {c.id: c.text for c in load_corpus(ROOT / "corpus" / "approved")}[summary_id]
+    positions = [text.index(name) for name in newest_to_oldest]
+    assert positions == sorted(positions)

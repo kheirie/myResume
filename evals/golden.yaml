@@ -1,5 +1,5 @@
 # Golden set for the approved corpus supplied on 2026-10-13.
-# 30 answerable questions and 9 unanswerable questions.
+# 36 answerable questions and 9 unanswerable questions.
 
 
 - question: "How would you summarize Kheirie's professional background and main areas of expertise?"
@@ -22,9 +22,7 @@
 - question: "What degrees does Kheirie hold, and which universities or institutes awarded them?"
   answerable: true
   expected_sources:
-    - edu-rhu#bsc-and-msc-in-computer-communication-engineering
-    - edu-akureyri#ma-by-research-in-social-sciences
-    - edu-dsti#applied-msc-in-data-science-artificial-intelligence
+    - about#degrees
   notes: >-
     Expected: a BSc and an MSc in Computer and Communication Engineering from
     Rafic Hariri University in Lebanon; an MA by Research in Social Sciences
@@ -373,9 +371,7 @@
 - question: "What teaching or coaching experience does Kheirie have?"
   answerable: true
   expected_sources:
-    - exp-tfl-fellow#teaching-mathematics-and-computer-subjects-in-primary-school
-    - exp-tfl-mentor#coaching-and-supervising-teaching-fellows
-    - exp-simey#english-course-design-for-syrian-refugee-learners
+    - about#teaching-coaching-and-education-roles
   notes: >-
     Expected: Teach For Lebanon Fellow (2014-2016), teaching mathematics and
     computer subjects in Grades 1-6; Temporary Educational Mentor (Oct-Dec
@@ -465,3 +461,89 @@
     Same expectation as "Tell me about Kheirie": a professional overview
     covering data science and education, not personal trivia.
 
+# ---------------------------------------------------------------------------
+# Added 2026-10-16: list questions spanning several documents. Found by Kheirie
+# in the web app: "Is Kheirie a data scientist?" left out Sanofi because
+# Braincities and QuantCube sections filled every slot.
+# ---------------------------------------------------------------------------
+
+- question: "Is Kheirie a data scientist?"
+  answerable: true
+  expected_sources:
+    - about#data-science-roles
+  notes: >-
+    Expected: yes, with the three data science roles: Junior Data Scientist
+    (work-study) at QuantCube Technology (2023-2025), NLP Data Scientist
+    (interim) at Sanofi (2021-2022), and Data Scientist at Braincities Lab
+    (2020-2021). Leaving out a role is incomplete.
+
+- question: "Which companies has Kheirie worked for as a data scientist?"
+  answerable: true
+  expected_sources:
+    - about#data-science-roles
+  notes: >-
+    Expected: QuantCube Technology, Sanofi, and Braincities Lab, with titles
+    and dates. Teaching roles are not data science roles.
+
+
+# ---------------------------------------------------------------------------
+# Added 2026-10-16: judgment questions (prompt v6). The bot may draw a
+# conclusion from one cited section at a time, labeled as based on the
+# materials. It must never merge sections into one claim, upgrade a listed
+# skill to job experience, or state what Kheirie wants.
+# ---------------------------------------------------------------------------
+
+- question: "What job roles would suit Kheirie?"
+  answerable: true
+  match: any
+  expected_sources:
+    - about#data-science-roles
+    - about#teaching-coaching-and-education-roles
+    - exp-quantcube#role-overview
+    - exp-sanofi#role-overview
+    - exp-braincities#role-overview
+    - exp-akureyri-curriculum#role-overview
+  notes: >-
+    Expected: role families tied one-to-one to documented roles, such as data
+    science (QuantCube, Braincities), NLP (Sanofi), and AI curriculum design or
+    teaching (University of Akureyri, Teach For Lebanon), each stated as based
+    on the materials. Not allowed: seniority not in the CV, roles Kheirie
+    "wants", or job titles no section supports.
+
+- question: "Would Kheirie be a good senior cloud architect?"
+  answerable: true
+  expected_sources:
+    - skills#mlops-and-cloud-skills
+  notes: >-
+    Expected: Kheirie's CV lists AWS (EC2, S3, Lambda), Docker, and GitHub
+    CI/CD, but no section documents senior or cloud architecture work, so the
+    materials do not support the fit. Not allowed: "experience with AWS", or
+    AWS or Docker used at QuantCube (its tools are BERT, LangChain, Ollama,
+    Selenium, BeautifulSoup, MLflow, Git). Never a bare yes.
+
+- question: "Could Kheirie work as an NLP engineer?"
+  answerable: true
+  match: any
+  expected_sources:
+    - exp-sanofi#role-overview
+    - exp-quantcube#role-overview
+    - skills#nlp-skills
+  notes: >-
+    Expected: based on the NLP Data Scientist role at Sanofi (BERT-based
+    extractive summarization) and the NLP work at QuantCube, the background
+    fits NLP roles; CV-listed NLP skills are claims, not job evidence. Not
+    allowed: production deployment or engineering ownership the CV does not
+    state.
+
+# Added 2026-10-16: the web app's first example question returned only Sanofi.
+- question: "What NLP work has Kheirie done, and with what results?"
+  answerable: true
+  expected_sources:
+    - about#nlp-projects
+  notes: >-
+    Expected: three NLP projects. At QuantCube (NLP team), BERT-based sentiment
+    analysis of Arabic and English text for PMI nowcasting (80% correlation for
+    Egypt, 88% for Saudi Arabia). At Sanofi, as part of a team, BERT-based
+    extractive summarization (ROUGE-1 47%, ROUGE-2 25%). At Braincities, the
+    NLP-based ENEL job matching with a fine-tuned Sentence-BERT (90% accuracy).
+    The QuantCube agentic RAG tool may be added. Missing a project is incomplete.

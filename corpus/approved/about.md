@@ -6,7 +6,7 @@ source_type: cv
 sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
-  - Clarifications from Kheirie (2026-10-12 to 2026-10-13)
+  - Clarifications from Kheirie (2026-10-12 to 2026-10-16)
 open_questions: []
 ---
 
@@ -19,8 +19,20 @@ Kheirie's background combines data science and education. Kheirie is a data scie
 ## Data science profile
 Kheirie's data science experience covers statistical modeling and time series, fine-tuning Transformer models, semantic search, and LLM-based systems (RAG and agents). Kheirie's Data Science CV describes Kheirie as rigorous about model evaluation and reproducibility, and experienced in explaining technical topics clearly.
 
+## Data science roles
+Kheirie has held three data science roles. At QuantCube Technology in Paris, France, Kheirie was a Junior Data Scientist (work-study) from October 2023 to October 2025. At Sanofi in Chilly-Mazarin, France, Kheirie was an NLP Data Scientist (interim) from November 2021 to March 2022, in the research and development (R&D) NLP team. At Braincities Lab in Paris, France, Kheirie was a Data Scientist from August 2020 to August 2021.
+
+## NLP projects
+Kheirie's documented NLP work spans three roles. At QuantCube Technology, within the NLP team, Kheirie built PMI nowcasting indicators using BERT-based sentiment analysis of Arabic and English text, with 80% correlation with the official Egyptian PMI and 88% correlation with the official Saudi Arabian PMI. At QuantCube Technology, within the NLP team, Kheirie also developed an internal agentic RAG research tool. At Sanofi, in the research and development (R&D) NLP team, Kheirie was part of a team that fine-tuned BERT-based models for extractive summarization, reaching a ROUGE-1 score of 47% and a ROUGE-2 score of 25%. At Braincities Lab, Kheirie fine-tuned the Sentence-BERT model for the NLP-based ENEL job-matching project, which achieved 90% accuracy.
+
 ## Learning and development profile
 Kheirie's Learning & Development CV describes a background in teacher coaching, course design, and data analysis, with experience supporting and evaluating teachers, designing courses, and turning data into clear reports for decision-making.
+
+## Teaching, coaching and education roles
+Kheirie has held four education roles. Since July 2026, Kheirie has worked as a freelance AI Curriculum Developer for the University of Akureyri, developing two master's-level AI courses that are still in development and delivering a guest lecture on using AI critically. At SÍMEY Lifelong Learning Centre in Iceland, Kheirie was an English as a Foreign Language (EFL) teacher from September to October 2017, and designed the full English course for 9 Syrian refugee learners. At Teach For Lebanon, Kheirie was a Temporary Educational Mentor from October to December 2016, and supervised and coached 13 teaching fellows. At Teach For Lebanon, Kheirie was earlier a Fellow from July 2014 to July 2016, teaching mathematics and computer subjects to primary school students in Grades 1 to 6.
+
+## Degrees
+Kheirie holds four degrees. Kheirie earned an Applied MSc in Data Science & Artificial Intelligence from Data ScienceTech Institute (DSTI) in Paris, France, studying there from September 2023 to December 2025. Kheirie completed an MA by Research in Social Sciences at the University of Akureyri in Iceland, from September 2017 to February 2019. Kheirie earned an MSc in Computer and Communication Engineering at Rafic Hariri University in Lebanon (January 2012 to December 2013), after a BSc in Computer and Communication Engineering there (September 2008 to December 2011).
 
 ## Nationality
 Kheirie has French nationality.

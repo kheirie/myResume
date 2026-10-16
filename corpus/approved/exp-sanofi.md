@@ -11,6 +11,7 @@ date_range: 2021-11 to 2022-03
 sources:
   - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
+  - Clarifications from Kheirie (2026-10-16)
 section_sources:
   about-sanofi:
     - Sanofi official website, https://www.sanofi.com/en/about-us (retrieved 2026-10-12)
@@ -18,7 +19,7 @@ open_questions: []
 ---
 
 ## Role overview
-Kheirie worked as an NLP Data Scientist at Sanofi in Chilly-Mazarin, France, from November 2021 to March 2022, on an interim (temporary) placement. Kheirie was part of a team working on extractive summarization of detailed description documents about medicines and drugs, using BERT-based models.
+Kheirie worked as an NLP Data Scientist at Sanofi in Chilly-Mazarin, France, from November 2021 to March 2022, on an interim (temporary) placement. At Sanofi, Kheirie was part of the research and development (R&D) NLP team. Kheirie was part of a team working on extractive summarization of detailed description documents about medicines and drugs, using BERT-based models.
 
 ## About Sanofi
 Sanofi is a biopharma company that discovers, develops, and delivers medicines and vaccines.

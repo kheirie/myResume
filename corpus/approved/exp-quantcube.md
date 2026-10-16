@@ -11,6 +11,7 @@ date_range: 2023-10 to 2025-10
 sources:
   - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
+  - Clarifications from Kheirie (2026-10-16)
 section_sources:
   about-quantcube-technology:
     - QuantCube Technology official website, https://www.quant-cube.com/technology
@@ -24,13 +25,13 @@ Kheirie worked as a Junior Data Scientist at QuantCube Technology in Paris, Fran
 QuantCube Technology is a fintech company that uses artificial intelligence and alternative data to provide real-time macroeconomic insights.
 
 ## PMI nowcasting with Arabic and English sentiment analysis
-At QuantCube Technology, Kheirie built PMI (Purchasing Managers' Index) nowcasting indicators for Egypt and Saudi Arabia. BERT-based sentiment analysis was applied to textual data in Arabic and English, and the indicators combined that sentiment information with numerical data. The Egypt indicator achieved 80% correlation with the official Egyptian PMI. The Saudi Arabia indicator achieved 88% correlation with the official Saudi Arabian PMI.
+At QuantCube Technology, within the NLP team, Kheirie built PMI (Purchasing Managers' Index) nowcasting indicators for Egypt and Saudi Arabia. BERT-based sentiment analysis was applied to textual data in Arabic and English, and the indicators combined that sentiment information with numerical data. The Egypt indicator achieved 80% correlation with the official Egyptian PMI. The Saudi Arabia indicator achieved 88% correlation with the official Saudi Arabian PMI.
 
 ## Consumer Price Index estimation for Saudi Arabia
-At QuantCube Technology, Kheirie designed and evaluated statistical and machine learning models to estimate Saudi Arabia's Consumer Price Index (CPI). The models achieved 98% correlation with the official benchmark.
+At QuantCube Technology, with the macro team, Kheirie designed and evaluated statistical and machine learning models to estimate Saudi Arabia's Consumer Price Index (CPI). The models achieved 98% correlation with the official benchmark.
 
 ## Agentic RAG research tool for explaining indicators
-At QuantCube Technology, Kheirie developed an internal agentic RAG (retrieval-augmented generation) tool as Kheirie's own research project. Built with LangChain and Ollama, it explains variations in economic indicators. It was an internal research tool, not a customer-facing production system.
+At QuantCube Technology, within the NLP team, Kheirie developed an internal agentic RAG (retrieval-augmented generation) tool as Kheirie's own research project. Built with LangChain and Ollama, it explains variations in economic indicators. It was an internal research tool, not a customer-facing production system.
 
 ## Data pipelines and model evaluation
 At QuantCube Technology, Kheirie built data collection and preprocessing pipelines using Selenium and BeautifulSoup for web scraping. Kheirie evaluated models against official benchmarks using correlation and RMSE.
