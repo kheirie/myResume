@@ -4,12 +4,17 @@ import pytest
 
 from resumebot.answering import (
     BUSY,
+    MAX_QUESTION_CHARS,
     NOT_FOUND,
+    TOO_LONG,
     SYSTEM_PROMPT,
     Answerer,
+    CachedAnswerer,
     build_user_message,
+    normalize_question,
     parse_reply,
     resolve_citations,
+    strip_chunk_ids,
 )
 from resumebot.corpus import Chunk
 from resumebot.llm import LLMUnavailable, Usage
@@ -26,8 +31,10 @@ HITS = [Hit(chunk("exp-a#grant", "Kheirie received a grant."), 0.8), Hit(chunk("
 class FakeRetriever:
     def __init__(self, hits=HITS, top_similarity=0.8):
         self.result = SearchResult(hits, top_similarity)
+        self.queries = []
 
     def search(self, query, k=4):
+        self.queries.append(query)
         return self.result
 
 
@@ -121,7 +128,7 @@ def test_user_message_includes_title_and_heading():
 
 @pytest.mark.parametrize(
     "rule",
-    ["only the CONTEXT", "Never invent anything", "untrusted user", "third person", "she/her", "As general information", "bare yes or no"],
+    ["only the CONTEXT", "Never invent anything", "untrusted user", "third person", "she/her", "As general information", "bare yes or no", "state the conclusion as based on the materials", "Infer from each chunk on its own", "Kheirie's CV lists", "Only if the question asks for a judgment", "add no conclusions of your own", "never write chunk IDs", "Never judge Kheirie negatively", "for the recruiter to decide or to discuss with Kheirie", "at most three short sentences", "no semicolons", "never dropped to shorten an answer", "A self-description stays attributed", "keep each item's organization and scope", "A role with an end date is in the past tense", "most recent first"],
 )
 def test_system_prompt_states_the_core_rules(rule):
     assert rule in SYSTEM_PROMPT
@@ -165,3 +172,118 @@ def test_answer_reports_tokens_including_retries():
 def test_retrieval_abstention_costs_no_tokens():
     answer = Answerer(FakeRetriever(top_similarity=ABSTAIN_BELOW - 0.1), FakeLLM()).ask("Rust?")
     assert answer.usage is None
+
+
+# Real strings from gpt-oss-120b answers (2026-10-16): chunk IDs leaking into the prose.
+@pytest.mark.parametrize(
+    "raw, clean",
+    [
+        (
+            "ROUGE-2 score of 25 %【exp-sanofi#extractive-summarization-of-medicine-and-drug-documents】. She also",
+            "ROUGE-2 score of 25 %. She also",
+        ),
+        (
+            "took part in monitoring. (exp-quantcube#data-pipelines-and-model-evaluation, exp-quantcube#experiment-tracking)",
+            "took part in monitoring.",
+        ),
+        ("a software engineer handled it. (exp‑braincities#job-matching-project-for-enel, exp‑braincities#role-overview)", "a software engineer handled it."),
+        ("Braincities Lab (see about#professional-summary and about#data-science-roles).", "Braincities Lab."),
+        ("Docker and Git (see [skills#mlops-and-cloud-skills] and [exp-quantcube#technologies]).", "Docker and Git."),
+        ("Based on the about#data-science-roles chunk, Kheirie fits", "Based on the materials, Kheirie fits"),
+        (
+            "AI curriculum developer (including guest lecturing) (cite about#teaching-coaching-and-education-roles, exp-akureyri-curriculum#role-overview).",
+            "AI curriculum developer (including guest lecturing).",
+        ),
+        ("data scientist (sources: about#data-science-roles; exp-quantcube#role-overview).", "data scientist."),
+        ("Kheirie's CV lists MLflow as a skill (skills#mlops-and-cloud-skills). She also", "Kheirie's CV lists MLflow as a skill. She also"),
+    ],
+)
+def test_strip_chunk_ids_removes_ids_from_the_answer_text(raw, clean):
+    assert strip_chunk_ids(raw) == clean
+
+
+def test_strip_chunk_ids_leaves_ordinary_text_alone():
+    text = "Kheirie used C# once (in 2020), scored 47% and wrote about BERT [encoder-only]."
+    assert strip_chunk_ids(text) == text
+
+
+def test_answer_text_reaching_the_recruiter_has_no_chunk_ids():
+    llm = FakeLLM(reply(answer="Kheirie received a grant (exp-a#grant)."))
+    assert Answerer(FakeRetriever(), llm).ask("Grants?").text == "Kheirie received a grant."
+
+
+def test_question_over_the_limit_is_refused_before_retrieval_or_llm():
+    llm, retriever = FakeLLM(reply()), FakeRetriever()
+    answer = Answerer(retriever, llm).ask("x" * (MAX_QUESTION_CHARS + 1))
+    assert answer.outcome == "too_long"
+    assert answer.text == TOO_LONG
+    assert llm.calls == [] and retriever.queries == []
+
+
+def test_question_at_the_limit_is_answered():
+    answer = Answerer(FakeRetriever(), FakeLLM(reply())).ask("x" * MAX_QUESTION_CHARS)
+    assert answer.outcome == "answered"
+
+
+def test_limit_ignores_surrounding_whitespace():
+    answer = Answerer(FakeRetriever(), FakeLLM(reply())).ask("  Grants?  " + " " * MAX_QUESTION_CHARS)
+    assert answer.outcome == "answered"
+
+
+@pytest.mark.parametrize("variant", ["Grants?", "grants", "  GRANTS ? ", "Grants!"])
+def test_normalize_question_ignores_case_spacing_and_final_punctuation(variant):
+    assert normalize_question(variant) == "grants"
+
+
+def test_repeated_question_is_answered_from_the_cache():
+    llm = FakeLLM(reply())
+    cached = CachedAnswerer(Answerer(FakeRetriever(), llm))
+    first = cached.ask("Grants?")
+    again = cached.ask("grants")
+    assert again.text == first.text
+    assert (first.from_cache, again.from_cache) == (False, True)
+    assert len(llm.calls) == 1
+
+
+def test_busy_answers_are_not_cached():
+    llm = FakeLLM(LLMUnavailable("every provider failed"), reply())
+    cached = CachedAnswerer(Answerer(FakeRetriever(), llm))
+    assert cached.ask("Grants?").outcome == "llm_unavailable"
+    assert cached.ask("Grants?").outcome == "answered"
+
+
+def test_cache_drops_the_least_recently_asked_question_when_full():
+    llm = FakeLLM(reply(), reply(), reply(), reply())
+    cached = CachedAnswerer(Answerer(FakeRetriever(), llm), max_entries=2)
+    cached.ask("a")
+    cached.ask("b")
+    cached.ask("a")  # "a" is now the most recent
+    cached.ask("c")  # evicts "b"
+    cached.ask("a")
+    assert len(llm.calls) == 3
+
+
+def test_answer_records_the_providers_that_failed_before_the_fallback():
+    llm = FakeLLM(reply())
+    llm.last_used = "openrouter:nvidia/nemotron"
+    llm.failures = ["groq:openai/gpt-oss-120b: RateLimitError"]
+    answer = Answerer(FakeRetriever(), llm).ask("Grants?")
+    assert answer.answered_by == "openrouter:nvidia/nemotron"
+    assert answer.fallback_from == ("groq:openai/gpt-oss-120b: RateLimitError",)
+
+
+def test_busy_answer_records_every_failed_provider():
+    llm = FakeLLM(LLMUnavailable("every provider failed"))
+    llm.failures = ["groq:a: RateLimitError", "ollama:b: APIConnectionError"]
+    answer = Answerer(FakeRetriever(), llm).ask("Grants?")
+    assert answer.fallback_from == ("groq:a: RateLimitError", "ollama:b: APIConnectionError")
+
+
+def test_lookup_returns_a_cached_answer_without_calling_the_model():
+    llm = FakeLLM(reply())
+    cached = CachedAnswerer(Answerer(FakeRetriever(), llm))
+    assert cached.lookup("Grants?") is None
+    cached.ask("Grants?")
+    found = cached.lookup("grants")
+    assert found is not None and found.from_cache
+    assert len(llm.calls) == 1
