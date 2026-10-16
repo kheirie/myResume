@@ -4,6 +4,7 @@ from resumebot.answering import NOT_FOUND, TOO_LONG, MAX_QUESTION_CHARS, Answer
 from resumebot.chat import (
     AI_ANSWERS_PER_DAY,
     PASSAGES_NOTE,
+    UNAVAILABLE_NOTE,
     Chat,
     PassageAnswerer,
     QuestionQuota,
@@ -146,3 +147,17 @@ def test_passages_are_used_when_every_model_is_busy():
     answer = chat.reply("Grants?", "v1")
     assert answer.outcome == "passages"
     assert chat.remaining("v1") == AI_ANSWERS_PER_DAY
+
+
+def test_without_any_model_every_question_gets_passages():
+    chat = Chat(None, PassageAnswerer(FakeRetriever()), QuestionQuota(clock=FakeClock()))
+    assert chat.reply("Grants?", "v1").outcome == "passages"
+
+
+def test_passages_explain_why_no_ai_answer_was_given():
+    limit_reached = make_chat()
+    for i in range(AI_ANSWERS_PER_DAY):
+        limit_reached.reply(f"question {i}", "v1")
+    assert limit_reached.reply("Grants?", "v1").text.startswith(PASSAGES_NOTE)
+    no_model = Chat(None, PassageAnswerer(FakeRetriever()), QuestionQuota(clock=FakeClock()))
+    assert no_model.reply("Grants?", "v1").text.startswith(UNAVAILABLE_NOTE)

@@ -27,6 +27,10 @@ PASSAGES_NOTE = (
     f"You have used today's {AI_ANSWERS_PER_DAY} AI answers. Here are the passages from "
     "Kheirie's approved materials that best match your question:"
 )
+UNAVAILABLE_NOTE = (
+    "AI answers are not available right now. Here are the passages from Kheirie's approved "
+    "materials that best match your question:"
+)
 
 # Visitors are recognized by a salted hash of their network address, never the address
 # itself. The salt is new at every start, so the hashes mean nothing outside this process.
@@ -77,7 +81,7 @@ class PassageAnswerer:
     def __init__(self, retriever: Searcher):
         self._retriever = retriever
 
-    def ask(self, question: str) -> Answer:
+    def ask(self, question: str, note: str = PASSAGES_NOTE) -> Answer:
         question = question.strip()
         if len(question) > MAX_QUESTION_CHARS:
             return Answer(TOO_LONG, False, [], "too_long")
@@ -86,7 +90,7 @@ class PassageAnswerer:
             return Answer(NOT_FOUND, False, [], "abstained_retrieval")
         chunks = [hit.chunk for hit in result.hits[:PASSAGES_SHOWN]]
         passages = [f"**{c.heading}** ({c.doc_title})\n\n{c.text}" for c in chunks]
-        return Answer("\n\n".join([PASSAGES_NOTE, *passages]), True, chunks, "passages")
+        return Answer("\n\n".join([note, *passages]), True, chunks, "passages")
 
 
 class CachingAnswerer(Protocol):
@@ -95,9 +99,12 @@ class CachingAnswerer(Protocol):
 
 
 class Chat:
-    """Decides, per question, between a cached answer, an AI answer and passages."""
+    """Decides, per question, between a cached answer, an AI answer and passages.
 
-    def __init__(self, answerer: CachingAnswerer, passages: PassageAnswerer, quota: QuestionQuota):
+    Without an answerer (no API key configured), every question gets passages.
+    """
+
+    def __init__(self, answerer: CachingAnswerer | None, passages: PassageAnswerer, quota: QuestionQuota):
         self._answerer = answerer
         self._passages = passages
         self._quota = quota
@@ -106,6 +113,8 @@ class Chat:
         return self._quota.remaining(visitor)
 
     def reply(self, question: str, visitor: str) -> Answer:
+        if self._answerer is None:
+            return self._passages.ask(question, UNAVAILABLE_NOTE)
         cached = self._answerer.lookup(question)
         if cached is not None:
             return cached  # free, so served even after the limit
@@ -113,7 +122,7 @@ class Chat:
             return self._passages.ask(question)
         answer = self._answerer.ask(question)
         if answer.outcome == "llm_unavailable":
-            return self._passages.ask(question)  # every model busy: passages beat "try later"
+            return self._passages.ask(question, UNAVAILABLE_NOTE)  # every model busy: passages beat "try later"
         if answer.answered_by and not answer.from_cache:
             self._quota.record(visitor)
         return answer

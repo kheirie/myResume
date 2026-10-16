@@ -17,7 +17,7 @@ from resumebot.answering import MAX_QUESTION_CHARS, Answerer, CachedAnswerer  # 
 from resumebot.chat import AI_ANSWERS_PER_DAY, Chat, PassageAnswerer, QuestionQuota, visitor_id  # noqa: E402
 from resumebot.corpus import load_corpus  # noqa: E402
 from resumebot.embeddings import FastEmbedEmbedder  # noqa: E402
-from resumebot.llm import build_llm  # noqa: E402
+from resumebot.llm import LLMConfigError, build_llm  # noqa: E402
 from resumebot.presentation import format_answer  # noqa: E402
 from resumebot.reranking import FastEmbedReranker  # noqa: E402
 from resumebot.retrieval import Retriever  # noqa: E402
@@ -42,14 +42,19 @@ EXAMPLES = [
 
 retriever = Retriever(load_corpus(ROOT / "corpus" / "approved"), FastEmbedEmbedder(), reranker=FastEmbedReranker())
 # Repeated questions (such as the examples below) are answered from memory at no token cost.
-llm = build_llm(os.environ.get("LLM_PROVIDER", "chain"))
-answerer = CachedAnswerer(Answerer(retriever, llm))
+try:
+    llm = build_llm(os.environ.get("LLM_PROVIDER", "chain"))
+except LLMConfigError:  # no API key set (e.g. a new Space before its secrets): passages only
+    llm = None
+answerer = CachedAnswerer(Answerer(retriever, llm)) if llm else None
 # Three AI answers per visitor per day, then passages only (portfolio budget).
 chat = Chat(answerer, PassageAnswerer(retriever), QuestionQuota())
 
 
 def models_in_order() -> str:
     """The models the app tries, primary first: "1. gpt-oss-120b (groq) · 2. ..."."""
+    if llm is None:
+        return "none configured, passages only"
     labels = [m.label for m in getattr(llm, "_llms", [llm])]  # a chain, or one provider
     return " · ".join(f"{i}. {lab.partition(':')[2]} ({lab.partition(':')[0]})" for i, lab in enumerate(labels, 1))
 
