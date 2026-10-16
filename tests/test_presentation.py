@@ -3,7 +3,9 @@ from resumebot.corpus import Chunk
 from resumebot.presentation import format_answer
 
 
-def test_answer_lists_each_source_with_heading_and_document():
+def test_answer_is_shown_without_its_sources():
+    # Kheirie's choice (2026-10-16): recruiters see only the answer. Citations are still
+    # required and checked in code; they just are not displayed.
     chunk = Chunk(
         "exp-a#grant",
         "exp-a",
@@ -11,16 +13,49 @@ def test_answer_lists_each_source_with_heading_and_document():
         "Grant and presentations",
         "text",
         "cv",
-        ("CV, Data Science version (2026)", "Clarifications from Kheirie (2026-10-12)"),
+        ("CV, Data Science version (2026)",),
     )
     shown = format_answer(Answer("Kheirie received a grant.", True, [chunk], "answered"))
-    assert shown.startswith("Kheirie received a grant.")
-    assert "**Sources**" in shown
-    assert (
-        "- *Grant and presentations* · MA by Research, University of Akureyri · "
-        "CV, Data Science version (2026); Clarifications from Kheirie (2026-10-12)"
-    ) in shown
+    assert shown == "Kheirie received a grant."
 
 
 def test_answer_without_citations_is_shown_alone():
     assert format_answer(Answer(NOT_FOUND, False, [], "abstained_retrieval")) == NOT_FOUND
+
+
+def test_model_line_names_the_model_and_provider_that_answered():
+    answer = Answer("Kheirie received a grant.", True, [], "answered", answered_by="groq:openai/gpt-oss-120b")
+    assert format_answer(answer, show_model=True) == "Kheirie received a grant.\n\n*Model: openai/gpt-oss-120b (groq)*"
+
+
+def test_no_model_line_when_no_model_was_called():
+    answer = Answer(NOT_FOUND, False, [], "abstained_retrieval")
+    assert format_answer(answer, show_model=True) == NOT_FOUND
+
+
+def test_model_line_is_off_by_default():
+    answer = Answer("Kheirie received a grant.", True, [], "answered", answered_by="groq:openai/gpt-oss-120b")
+    assert format_answer(answer) == "Kheirie received a grant."
+
+
+def test_model_line_marks_a_fallback_and_why():
+    answer = Answer(
+        "Kheirie received a grant.", True, [], "answered",
+        answered_by="openrouter:nvidia/nemotron",
+        fallback_from=("groq:openai/gpt-oss-120b: RateLimitError",),
+    )
+    assert format_answer(answer, show_model=True).endswith(
+        "*Model: nvidia/nemotron (openrouter) · fallback after groq:openai/gpt-oss-120b: RateLimitError*"
+    )
+
+
+def test_model_line_marks_a_cached_answer():
+    answer = Answer("Kheirie received a grant.", True, [], "answered", answered_by="groq:m", from_cache=True)
+    assert format_answer(answer, show_model=True).endswith("*Model: m (groq) · from cache*")
+
+
+def test_busy_answer_lists_the_failed_models():
+    answer = Answer("Busy.", False, [], "llm_unavailable", fallback_from=("groq:a: RateLimitError", "ollama:b: APIConnectionError"))
+    assert format_answer(answer, show_model=True) == (
+        "Busy.\n\n*All models failed: groq:a: RateLimitError; ollama:b: APIConnectionError*"
+    )

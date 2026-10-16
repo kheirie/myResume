@@ -1,0 +1,148 @@
+from datetime import date
+
+from resumebot.answering import NOT_FOUND, TOO_LONG, MAX_QUESTION_CHARS, Answer
+from resumebot.chat import (
+    AI_ANSWERS_PER_DAY,
+    PASSAGES_NOTE,
+    Chat,
+    PassageAnswerer,
+    QuestionQuota,
+    visitor_id,
+)
+from resumebot.corpus import Chunk
+from resumebot.retrieval import ABSTAIN_BELOW, Hit, SearchResult
+
+
+def chunk(cid, heading, text):
+    return Chunk(cid, cid.split("#")[0], "Demo Role, Demo Corp", heading, text, "cv", ("CV (2026)",))
+
+
+HITS = [
+    Hit(chunk("exp-a#grant", "Grant", "At Demo Corp, Kheirie received a grant."), 0.8),
+    Hit(chunk("exp-a#teaching", "Teaching", "At Demo Corp, Kheirie taught."), 0.7),
+    Hit(chunk("exp-a#other", "Other", "A third passage."), 0.6),
+]
+
+
+class FakeRetriever:
+    def __init__(self, top_similarity=0.8):
+        self.result = SearchResult(HITS, top_similarity)
+
+    def search(self, query, k=4):
+        return self.result
+
+
+class FakeClock:
+    def __init__(self):
+        self.today = date(2026, 10, 16)
+
+    def __call__(self):
+        return self.today
+
+
+class FakeAnswerer:
+    """Stands in for CachedAnswerer: an LLM answer, or a cached one for questions in `cached`."""
+
+    def __init__(self, cached=()):
+        self.cached = set(cached)
+        self.asked = []
+
+    def lookup(self, question):
+        if question in self.cached:
+            return Answer("Cached answer.", True, [], "answered", answered_by="groq:m", from_cache=True)
+        return None
+
+    def ask(self, question):
+        self.asked.append(question)
+        if question == "unknown":
+            return Answer(NOT_FOUND, False, [], "abstained_retrieval")
+        return Answer("AI answer.", True, [], "answered", answered_by="groq:m")
+
+
+def make_chat(answerer=None, clock=None):
+    return Chat(answerer or FakeAnswerer(), PassageAnswerer(FakeRetriever()), QuestionQuota(clock=clock or FakeClock()))
+
+
+# --- quota ---------------------------------------------------------------------------
+
+
+def test_quota_allows_three_ai_answers_per_visitor_per_day():
+    quota = QuestionQuota(clock=FakeClock())
+    for _ in range(AI_ANSWERS_PER_DAY):
+        assert quota.remaining("v1") > 0
+        quota.record("v1")
+    assert quota.remaining("v1") == 0
+    assert quota.remaining("v2") == AI_ANSWERS_PER_DAY  # another visitor has their own count
+
+
+def test_quota_resets_the_next_day():
+    clock = FakeClock()
+    quota = QuestionQuota(clock=clock)
+    for _ in range(AI_ANSWERS_PER_DAY):
+        quota.record("v1")
+    clock.today = date(2026, 10, 17)
+    assert quota.remaining("v1") == AI_ANSWERS_PER_DAY
+
+
+def test_visitor_id_prefers_the_forwarded_address_and_never_stores_it():
+    behind_proxy = visitor_id(client_host="10.0.0.1", forwarded_for="203.0.113.7, 10.0.0.1")
+    direct = visitor_id(client_host="203.0.113.7", forwarded_for=None)
+    assert behind_proxy == direct
+    assert "203.0.113.7" not in behind_proxy  # only a salted hash is kept
+
+
+# --- passages mode ---------------------------------------------------------------------
+
+
+def test_passages_show_the_two_best_sections_with_a_note():
+    answer = PassageAnswerer(FakeRetriever()).ask("Grants?")
+    assert answer.outcome == "passages"
+    assert answer.text.startswith(PASSAGES_NOTE)
+    assert "At Demo Corp, Kheirie received a grant." in answer.text
+    assert "At Demo Corp, Kheirie taught." in answer.text
+    assert "A third passage." not in answer.text
+    assert answer.answered_by is None  # no model wrote it
+
+
+def test_passages_abstain_when_nothing_is_close():
+    answer = PassageAnswerer(FakeRetriever(top_similarity=ABSTAIN_BELOW - 0.1)).ask("Rust?")
+    assert answer.text == NOT_FOUND
+
+
+def test_passages_refuse_long_questions():
+    assert PassageAnswerer(FakeRetriever()).ask("x" * (MAX_QUESTION_CHARS + 1)).text == TOO_LONG
+
+
+# --- choosing between AI answers and passages ---------------------------------------------
+
+
+def test_first_three_questions_get_ai_answers_then_passages():
+    chat = make_chat()
+    outcomes = [chat.reply(f"question {i}", "v1").outcome for i in range(AI_ANSWERS_PER_DAY + 1)]
+    assert outcomes == ["answered"] * AI_ANSWERS_PER_DAY + ["passages"]
+
+
+def test_answers_that_cost_nothing_do_not_use_up_a_question():
+    answerer = FakeAnswerer(cached={"example"})
+    chat = make_chat(answerer)
+    chat.reply("example", "v1")  # cached
+    chat.reply("unknown", "v1")  # nothing found, no model call
+    assert chat.remaining("v1") == AI_ANSWERS_PER_DAY
+
+
+def test_cached_answers_are_served_even_after_the_limit():
+    chat = make_chat(FakeAnswerer(cached={"example"}))
+    for i in range(AI_ANSWERS_PER_DAY):
+        chat.reply(f"question {i}", "v1")
+    assert chat.reply("example", "v1").text == "Cached answer."
+
+
+def test_passages_are_used_when_every_model_is_busy():
+    class BusyAnswerer(FakeAnswerer):
+        def ask(self, question):
+            return Answer("busy", False, [], "llm_unavailable")
+
+    chat = make_chat(BusyAnswerer())
+    answer = chat.reply("Grants?", "v1")
+    assert answer.outcome == "passages"
+    assert chat.remaining("v1") == AI_ANSWERS_PER_DAY
