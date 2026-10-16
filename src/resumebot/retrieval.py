@@ -44,6 +44,35 @@ def remove_subject_name(text: str) -> str:
     return "\n".join(" ".join(line.split()) for line in lines).strip()
 
 
+# "Tell me about Kheirie" minus the name is "Tell me about": nothing left to search
+# for, so it matched chunks titled "About Kheirie" (nationality, pronunciation)
+# instead of the professional summary. A question made only of these filler words
+# is a request for an overview. It is routed rather than searched: the sections that
+# answer it are known, so they are pinned first (no single query retrieved all three),
+# and the remaining slots come from searching OVERVIEW_QUERY.
+FILLER_WORDS = {
+    "a", "about", "an", "background", "can", "describe", "do", "does", "give", "her", "introduce",
+    "is", "know", "me", "of", "overview", "please", "profile", "something", "summarise", "summarize",
+    "summary", "tell", "the", "us", "what", "who", "you",
+}
+OVERVIEW_CHUNK_IDS = (
+    "about#professional-summary",
+    "about#data-science-profile",
+    "about#learning-and-development-profile",
+)
+OVERVIEW_QUERY = "professional summary and profile: data science, NLP and generative AI experience; education, teaching and course design background"
+
+
+def is_overview_question(query: str) -> bool:
+    """True for questions with no topic of their own, such as "Who is Kheirie?" (name already removed)."""
+    return all(w in FILLER_WORDS for w in re.findall(r"[a-z]+", query.lower()))
+
+
+def expand_overview_query(query: str) -> str:
+    """Replace a question with no topic of its own by an overview query."""
+    return OVERVIEW_QUERY if is_overview_question(query) else query
+
+
 @dataclass(frozen=True)
 class Hit:
     chunk: Chunk
@@ -88,22 +117,34 @@ class Retriever:
         self._reranker = reranker
         self._candidates = candidates
         self._matrix = embedder.embed_passages([text_for_embedding(c) for c in self.chunks])
+        ids = [c.id for c in self.chunks]
+        self._overview_indices = [ids.index(cid) for cid in OVERVIEW_CHUNK_IDS if cid in ids]
 
     def search(self, query: str, k: int = 4) -> SearchResult:
         """Return the k most relevant chunks, best first."""
         if k < 1:
             raise ValueError("k must be at least 1")
         query = remove_subject_name(query)
+        overview = is_overview_question(query)
+        if overview:
+            query = OVERVIEW_QUERY
         scores = self._matrix @ self._embedder.embed_query(query)
         order = np.argsort(-scores, kind="stable")
         top_similarity = float(scores[order[0]])
+        if overview:
+            pinned = [i for i in self._overview_indices]
+            order = np.array(pinned + [i for i in order if i not in pinned])
+            if self._reranker is None or len(pinned) >= k:
+                return SearchResult([Hit(self.chunks[i], float(scores[i])) for i in order[:k]], top_similarity)
 
         if self._reranker is None:
-            hits = [Hit(self.chunks[i], float(scores[i])) for i in order[:k]]
-        else:
-            candidates = order[: max(k, self._candidates)]
-            rerank = self._reranker.score(query, [text_for_embedding(self.chunks[i]) for i in candidates])
-            # sorted() is stable: on equal rerank scores the cosine order is kept.
-            ranked = sorted(zip(candidates, rerank), key=lambda pair: -pair[1])[:k]
-            hits = [Hit(self.chunks[i], float(scores[i]), float(r)) for i, r in ranked]
+            return SearchResult([Hit(self.chunks[i], float(scores[i])) for i in order[:k]], top_similarity)
+
+        fixed = [i for i in order[:k] if overview and i in self._overview_indices]  # pinned stay first
+        candidates = [i for i in order[: max(k, self._candidates)] if i not in fixed]
+        rerank = self._reranker.score(query, [text_for_embedding(self.chunks[i]) for i in candidates])
+        # sorted() is stable: on equal rerank scores the cosine order is kept.
+        ranked = sorted(zip(candidates, rerank), key=lambda pair: -pair[1])[: k - len(fixed)]
+        hits = [Hit(self.chunks[i], float(scores[i])) for i in fixed]
+        hits += [Hit(self.chunks[i], float(scores[i]), float(r)) for i, r in ranked]
         return SearchResult(hits, top_similarity)

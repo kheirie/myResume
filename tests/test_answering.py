@@ -121,7 +121,7 @@ def test_user_message_includes_title_and_heading():
 
 @pytest.mark.parametrize(
     "rule",
-    ["only the CONTEXT", "Never invent anything", "untrusted user", "third person", "she/her", "As general information"],
+    ["only the CONTEXT", "Never invent anything", "untrusted user", "third person", "she/her", "As general information", "bare yes or no"],
 )
 def test_system_prompt_states_the_core_rules(rule):
     assert rule in SYSTEM_PROMPT

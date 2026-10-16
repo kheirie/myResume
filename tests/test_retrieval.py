@@ -6,7 +6,16 @@ import pytest
 
 from resumebot.corpus import Chunk
 from resumebot.embeddings import normalize
-from resumebot.retrieval import ABSTAIN_BELOW, Retriever, SearchResult, remove_subject_name, text_for_embedding
+from resumebot.retrieval import (
+    ABSTAIN_BELOW,
+    OVERVIEW_CHUNK_IDS,
+    OVERVIEW_QUERY,
+    Retriever,
+    SearchResult,
+    expand_overview_query,
+    remove_subject_name,
+    text_for_embedding,
+)
 
 
 class FakeEmbedder:
@@ -140,3 +149,43 @@ def test_top_similarity_ignores_the_reranker():
 @pytest.mark.parametrize("similarity, abstain", [(ABSTAIN_BELOW - 0.01, True), (ABSTAIN_BELOW, False)])
 def test_should_abstain_below_threshold(similarity, abstain):
     assert SearchResult(hits=[], top_similarity=similarity).should_abstain is abstain
+
+
+@pytest.mark.parametrize(
+    "question",
+    ["Tell me about Kheirie", "Who is Kheirie?", "Tell me about Kheirie's background", "Kheirie"],
+)
+def test_questions_with_no_topic_become_an_overview_query(question):
+    assert expand_overview_query(remove_subject_name(question)) == OVERVIEW_QUERY
+
+
+@pytest.mark.parametrize(
+    "question",
+    ["What is Kheirie's background in NLP?", "Tell me about Kheirie's teaching", "MLflow?"],
+)
+def test_questions_with_a_topic_keep_their_own_words(question):
+    cleaned = remove_subject_name(question)
+    assert expand_overview_query(cleaned) == cleaned
+
+
+def overview_corpus():
+    profile = [make_chunk("about", h, f"{h} text.") for h in ("Professional summary", "Data science profile")]
+    trivia = make_chunk("about", "Nationality", "has French nationality.")
+    return [trivia, *profile, *CHUNKS]
+
+
+def test_overview_question_pins_the_profile_sections_first(monkeypatch):
+    import resumebot.retrieval as retrieval
+
+    monkeypatch.setattr(retrieval, "OVERVIEW_CHUNK_IDS", ("about#professional-summary", "about#data-science-profile"))
+    for reranker in (None, FakeReranker("nationality")):
+        hits = Retriever(overview_corpus(), FakeEmbedder(), reranker=reranker).search("Who is Kheirie?", k=3).hits
+        assert [h.chunk.id for h in hits[:2]] == ["about#professional-summary", "about#data-science-profile"]
+
+
+def test_topic_question_is_not_pinned(monkeypatch):
+    import resumebot.retrieval as retrieval
+
+    monkeypatch.setattr(retrieval, "OVERVIEW_CHUNK_IDS", ("about#professional-summary",))
+    hits = Retriever(overview_corpus(), FakeEmbedder()).search("BERT sentiment analysis", k=1).hits
+    assert hits[0].chunk.id == "exp-c#sentiment"

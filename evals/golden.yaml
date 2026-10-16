@@ -1,5 +1,5 @@
 # Golden set for the approved corpus supplied on 2026-10-13.
-# 28 answerable questions and 9 unanswerable questions.
+# 30 answerable questions and 9 unanswerable questions.
 
 
 - question: "How would you summarize Kheirie's professional background and main areas of expertise?"
@@ -436,4 +436,32 @@
     Near miss: the corpus gives the subjects (mathematics, computer) and
     grades (1-6), but not the number of students. May cite the fellow role
     for context. Do not estimate a class size.
+
+# ---------------------------------------------------------------------------
+# Added 2026-10-16: open-ended overview questions. Found by Kheirie in the web
+# app: removing the name left "Tell me about", which retrieved trivia chunks.
+# ---------------------------------------------------------------------------
+
+- question: "Tell me about Kheirie"
+  answerable: true
+  expected_sources:
+    - about#professional-summary
+    - about#data-science-profile
+    - about#learning-and-development-profile
+  notes: >-
+    The most common opening question. Expected: an overview of both strands:
+    a data scientist specializing in NLP and generative AI with over three
+    years of experience in finance and pharma, and a background in teaching,
+    teacher coaching, and course design. Do not lead with nationality,
+    pronunciation, or interests, and do not inflate seniority.
+
+- question: "Who is Kheirie?"
+  answerable: true
+  expected_sources:
+    - about#professional-summary
+    - about#data-science-profile
+    - about#learning-and-development-profile
+  notes: >-
+    Same expectation as "Tell me about Kheirie": a professional overview
+    covering data science and education, not personal trivia.
 

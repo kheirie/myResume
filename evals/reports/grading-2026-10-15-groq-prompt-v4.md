@@ -1,7 +1,7 @@
 # Content grading: gpt-oss-120b (Groq), prompt v4, threshold 0.55
 
 Source run: `answers-2026-10-15-1733-groq-prompt-v4.md`. Graded by Claude (2026-10-15) against the
-golden notes, as a comparison with the v3 grading. Kheirie's review is pending.
+golden notes, as a comparison with the v3 grading. Reviewed by Kheirie, who agreed with all grades (2026-10-16).
 
 Prompt v4 is a shortened rewrite of v3 (299 words instead of 544) with the same behaviours, and with
 Kheirie's pronoun preference: "call the candidate Kheirie or use she/her".

@@ -1,7 +1,7 @@
 # Content grading: gpt-oss-120b (Groq), prompt v3, threshold 0.55
 
 Graded against the golden notes. Source run: `answers-2026-10-15-1709-groq-prompt-v3.md`.
-Graded by Claude (2026-10-15). Kheirie reviewed questions 8, 23 and 35; review of the remaining grades is pending.
+Graded by Claude (2026-10-15). Reviewed by Kheirie, who agreed with all grades (2026-10-16).
 
 **Correct** = the answer says what the notes require and nothing they forbid.
 **Partial** = true and grounded, but incomplete, slightly overstated, or missing a required qualifier.

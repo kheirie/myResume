@@ -161,3 +161,10 @@ def test_every_golden_expected_source_exists():
         if source not in ids
     ]
     assert missing == []
+
+
+def test_overview_sections_exist_in_the_real_corpus():
+    from resumebot.retrieval import OVERVIEW_CHUNK_IDS
+
+    ids = {c.id for c in load_corpus(ROOT / "corpus" / "approved")}
+    assert set(OVERVIEW_CHUNK_IDS) <= ids  # renaming a profile heading must update the overview route
