@@ -3,6 +3,7 @@ from datetime import date
 from resumebot.answering import NOT_FOUND, TOO_LONG, MAX_QUESTION_CHARS, Answer
 from resumebot.chat import (
     AI_ANSWERS_PER_DAY,
+    PASSAGE_CLOSE_MARGIN,
     PASSAGES_NOTE,
     UNAVAILABLE_NOTE,
     Chat,
@@ -18,16 +19,15 @@ def chunk(cid, heading, text):
     return Chunk(cid, cid.split("#")[0], "Demo Role, Demo Corp", heading, text, "cv", ("CV (2026)",))
 
 
-HITS = [
-    Hit(chunk("exp-a#grant", "Grant", "At Demo Corp, Kheirie received a grant."), 0.8),
-    Hit(chunk("exp-a#teaching", "Teaching", "At Demo Corp, Kheirie taught."), 0.7),
-    Hit(chunk("exp-a#other", "Other", "A third passage."), 0.6),
-]
+GRANT = chunk("exp-a#grant", "Grant", "At Demo Corp, Kheirie received a grant.")
+TEACHING = chunk("exp-a#teaching", "Teaching", "At Demo Corp, Kheirie taught.")
+OTHER = chunk("exp-a#other", "Other", "A third passage.")
+HITS = [Hit(GRANT, 0.80), Hit(TEACHING, 0.78), Hit(OTHER, 0.60)]  # the second is close to the first
 
 
 class FakeRetriever:
-    def __init__(self, top_similarity=0.8):
-        self.result = SearchResult(HITS, top_similarity)
+    def __init__(self, top_similarity=0.8, hits=HITS):
+        self.result = SearchResult(hits, top_similarity)
 
     def search(self, query, k=4):
         return self.result
@@ -93,6 +93,20 @@ def test_visitor_id_prefers_the_forwarded_address_and_never_stores_it():
 
 
 # --- passages mode ---------------------------------------------------------------------
+
+
+def test_passages_show_only_the_best_section_when_the_second_matches_much_less():
+    far = [Hit(GRANT, 0.80), Hit(TEACHING, 0.80 - PASSAGE_CLOSE_MARGIN - 0.01)]
+    answer = PassageAnswerer(FakeRetriever(hits=far)).ask("Grants?")
+    assert "At Demo Corp, Kheirie received a grant." in answer.text
+    assert "At Demo Corp, Kheirie taught." not in answer.text
+
+
+def test_passages_keep_a_second_section_the_reranker_placed_below_a_closer_match():
+    # The reranker can put the more similar section second; it is then clearly worth showing.
+    reordered = [Hit(GRANT, 0.70), Hit(TEACHING, 0.78)]
+    answer = PassageAnswerer(FakeRetriever(hits=reordered)).ask("Grants?")
+    assert "At Demo Corp, Kheirie taught." in answer.text
 
 
 def test_passages_show_the_two_best_sections_with_a_note():

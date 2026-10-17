@@ -22,7 +22,12 @@ from resumebot.answering import MAX_QUESTION_CHARS, NOT_FOUND, TOO_LONG, Answer
 from resumebot.retrieval import SearchResult
 
 AI_ANSWERS_PER_DAY = 3
-PASSAGES_SHOWN = 2
+PASSAGES_SHOWN = 2  # at most
+# The second passage is shown only when its cosine similarity is within this margin of the
+# first (or above it: the reranker can place the closer match second). On the golden set
+# (2026-10-17), a second section within 0.05 was needed in 11 of 15 questions; further
+# away it was mostly noise, such as a company description.
+PASSAGE_CLOSE_MARGIN = 0.05
 PASSAGES_NOTE = (
     f"You have used today's {AI_ANSWERS_PER_DAY} AI answers. Here are the passages from "
     "Kheirie's approved materials that best match your question:"
@@ -88,7 +93,8 @@ class PassageAnswerer:
         result = self._retriever.search(question, k=PASSAGES_SHOWN)
         if result.should_abstain:
             return Answer(NOT_FOUND, False, [], "abstained_retrieval")
-        chunks = [hit.chunk for hit in result.hits[:PASSAGES_SHOWN]]
+        best, *others = result.hits[:PASSAGES_SHOWN]
+        chunks = [best.chunk] + [h.chunk for h in others if h.score >= best.score - PASSAGE_CLOSE_MARGIN]
         passages = [f"**{c.heading}** ({c.doc_title})\n\n{c.text}" for c in chunks]
         return Answer("\n\n".join([note, *passages]), True, chunks, "passages")
 
