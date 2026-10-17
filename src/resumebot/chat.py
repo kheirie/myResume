@@ -42,7 +42,7 @@ def visitor_id(client_host: str | None, forwarded_for: str | None) -> str:
 
     Behind a hosting proxy the real address is the first entry of X-Forwarded-For.
     """
-    address = (forwarded_for or "").split(",")[0].strip() or client_host or "unknown"
+    address = str(forwarded_for or "").split(",")[0].strip() or str(client_host or "") or "unknown"
     return hashlib.sha256(_SALT + address.encode()).hexdigest()[:16]
 
 

@@ -161,3 +161,12 @@ def test_passages_explain_why_no_ai_answer_was_given():
     assert limit_reached.reply("Grants?", "v1").text.startswith(PASSAGES_NOTE)
     no_model = Chat(None, PassageAnswerer(FakeRetriever()), QuestionQuota(clock=FakeClock()))
     assert no_model.reply("Grants?", "v1").text.startswith(UNAVAILABLE_NOTE)
+
+
+def test_visitor_id_never_fails_on_missing_or_unusual_values():
+    class Odd:
+        def __str__(self):
+            return "198.51.100.4"
+
+    assert visitor_id(None, None) == visitor_id("unknown", None)
+    assert visitor_id(Odd(), None) == visitor_id("198.51.100.4", None)

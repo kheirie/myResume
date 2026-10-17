@@ -1,0 +1,9 @@
+# Installed by the host (Posit Connect Cloud). Keep in step with pyproject.toml;
+# tests/test_requirements.py checks that every dependency there is listed here.
+fastembed>=0.9,<1
+numpy>=2
+openai>=1.40
+pydantic>=2
+python-dotenv>=1
+pyyaml>=6
+streamlit==1.66.0
