@@ -14,6 +14,12 @@ sources:
 section_sources:
   about-braincities-lab:
     - Braincities Lab LinkedIn company page (retrieved 2026-10-12); website http://www.braincities.co
+section_keywords:
+  role-overview: [startup, HR tech, human resources, workforce analytics, job matching, Paris]
+  about-braincities-lab: [company profile, startup, HR technology, people analytics]
+  hr-proof-of-concept-solutions: [proof of concept, prototype, HR analytics, human resources, workforce planning]
+  job-matching-project-for-enel: [semantic search, semantic similarity, sentence embeddings, text matching, natural language processing, NLP, job classification, occupation taxonomy, web scraping, information retrieval, fine-tuning, accuracy]
+  technologies-used-at-braincities-lab: [tools, tech stack, libraries, embeddings, web scraping]
 open_questions: []
 ---
 

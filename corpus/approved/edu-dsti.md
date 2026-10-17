@@ -10,6 +10,8 @@ date_range: 2023-09 to 2025-12
 sources:
   - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
+section_keywords:
+  applied-msc-in-data-science-artificial-intelligence: [master's degree, MSc, data science degree, artificial intelligence degree, graduate studies, work-study, apprenticeship, alternance, Paris]
 open_questions: []
 ---
 

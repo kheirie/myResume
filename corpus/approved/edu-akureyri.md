@@ -11,6 +11,11 @@ sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
   - Clarifications from Kheirie (2026-10-12)
+section_keywords:
+  ma-by-research-in-social-sciences: [master's degree, MA, social sciences, graduate studies, research degree, Iceland]
+  ma-research-topic-syrian-students-in-icelandic-schools: [qualitative research, interviews, refugees, migration, immigrant students, education research, thesis, social research]
+  publication-from-the-ma-research-routledge-chapter: [publications, book chapter, academic writing, research publication, co-author, migration, Iceland]
+  grant-and-presentations-from-the-ma-research: [award, funding, research grant, recognition, presentations, talks, public speaking]
 open_questions: []
 ---
 

@@ -15,6 +15,15 @@ sources:
 section_sources:
   about-quantcube-technology:
     - QuantCube Technology official website, https://www.quant-cube.com/technology
+section_keywords:
+  role-overview: [work-study, apprenticeship, alternance, fintech, finance, economics, macroeconomics, nowcasting, Paris]
+  about-quantcube-technology: [company profile, fintech, alternative data, macroeconomics, finance]
+  pmi-nowcasting-with-arabic-and-english-sentiment-analysis: [natural language processing, NLP, sentiment analysis, multilingual NLP, Arabic NLP, economic indicators, nowcasting, forecasting, alternative data, finance, economics]
+  consumer-price-index-estimation-for-saudi-arabia: [inflation, inflation estimation, consumer prices, economic forecasting, nowcasting, statistical modeling, machine learning, macroeconomics]
+  agentic-rag-research-tool-for-explaining-indicators: [retrieval-augmented generation, LLM, large language models, generative AI, GenAI, AI agents, agentic AI, explainability, economic indicators]
+  data-pipelines-and-model-evaluation: [ETL, data collection, data preprocessing, web scraping, data cleaning, model evaluation, benchmarking, validation, RMSE]
+  experiment-tracking-and-model-monitoring: [MLOps, experiment tracking, model versioning, version control, model monitoring, reproducibility]
+  technologies-used-at-quantcube-technology: [tools, tech stack, libraries, frameworks, LLM, web scraping, MLOps]
 open_questions: []
 ---
 

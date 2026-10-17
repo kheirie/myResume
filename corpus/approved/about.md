@@ -7,6 +7,18 @@ sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
   - Clarifications from Kheirie (2026-10-12 to 2026-10-16)
+section_keywords:
+  professional-summary: [career summary, profile, overview, years of experience, data scientist, teaching background]
+  data-science-profile: [data science expertise, machine learning, statistics, time series forecasting, transformers, large language models, LLM, retrieval-augmented generation, AI agents, model evaluation, reproducibility, technical communication]
+  data-science-roles: [work history, employment history, data scientist experience]
+  nlp-projects: [natural language processing, text analytics, text mining, language models, sentiment analysis, summarization, semantic search, NLP experience, results]
+  learning-and-development-profile: [L&D, learning and development, training, instructional design, teacher training, education, coaching, data analysis, reporting]
+  teaching-coaching-and-education-roles: [teaching experience, coaching, mentoring, training, instructional design, curriculum development, teacher, educator, lecturer]
+  degrees: [education, academic background, qualifications, diplomas, university, master's degree, bachelor's degree, studies]
+  nationality: [citizenship, visa, work permit, right to work, sponsorship, EU citizen, European Union, passport]
+  international-background: [countries, international experience, multicultural, multilingual, abroad, Lebanon, Iceland, France, languages spoken]
+  interests-writing: [hobbies, personal interests, blogging, technical writing, articles, Medium]
+  interests-education-causes: [hobbies, personal interests, social impact, education causes, values, motivation]
 open_questions: []
 ---
 

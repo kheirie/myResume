@@ -1,5 +1,6 @@
 import re
 import zlib
+from dataclasses import replace
 
 import numpy as np
 import pytest
@@ -86,6 +87,11 @@ def test_k_below_one_is_rejected(retriever):
 def test_empty_corpus_is_rejected():
     with pytest.raises(ValueError):
         Retriever([], FakeEmbedder())
+
+
+def test_section_keywords_are_embedded_after_the_text():
+    chunk = replace(make_chunk("exp-s", "Pipelines", "Kheirie built pipelines.", title="Role"), keywords=("ETL", "data engineering"))
+    assert text_for_embedding(chunk) == "Role\nPipelines\nbuilt pipelines.\nKeywords: ETL, data engineering"
 
 
 def test_title_and_heading_are_embedded_with_the_text():

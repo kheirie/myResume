@@ -287,3 +287,10 @@ def test_lookup_returns_a_cached_answer_without_calling_the_model():
     found = cached.lookup("grants")
     assert found is not None and found.from_cache
     assert len(llm.calls) == 1
+
+
+def test_section_keywords_are_never_shown_to_the_model():
+    from dataclasses import replace
+
+    hit = Hit(replace(chunk("exp-a#grant", "Kheirie received a grant."), keywords=("funding", "award")), 0.8)
+    assert "funding" not in build_user_message("Grants?", [hit])

@@ -9,6 +9,9 @@ location: Akureyri, Iceland
 date_range: 2017-09 to 2017-10
 sources:
   - CV, Learning & Development version (2026)
+section_keywords:
+  role-overview: [language teaching, English teacher, adult education, lifelong learning, Iceland]
+  english-course-design-for-syrian-refugee-learners: [curriculum design, course design, teaching materials, refugees, migrants, language learning, inclusion, adult learners]
 open_questions: []
 ---
 

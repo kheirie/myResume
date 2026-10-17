@@ -30,6 +30,9 @@ class Chunk:
     text: str
     source_type: str  # "cv" or "article"
     sources: tuple[str, ...]
+    # Retrieval-only terms from `section_keywords` (synonyms and categories of what the text
+    # says). Embedded for matching, never shown to the LLM or in passages, so never a claim.
+    keywords: tuple[str, ...] = ()
 
 
 def slugify(heading: str) -> str:
@@ -89,7 +92,8 @@ def chunks_from_document(meta: dict, body: str) -> list[Chunk]:
       - every key in REQUIRED_KEYS is present
       - status is "approved"
       - open_questions, if present, is empty
-      - every key in section_sources matches the slug of a real heading
+      - every key in section_sources and section_keywords matches the slug of a real heading
+      - each section_keywords value is a list of strings
     A section's sources come from section_sources[slug] if present,
     otherwise from the document's `sources`.
     """
@@ -107,6 +111,13 @@ def chunks_from_document(meta: dict, body: str) -> list[Chunk]:
     unknown = set(overrides) - set(slugs)
     if unknown:
         raise CorpusError(f"section_sources keys match no heading: {', '.join(sorted(unknown))}")
+    keywords = meta.get("section_keywords") or {}
+    unknown = set(keywords) - set(slugs)
+    if unknown:
+        raise CorpusError(f"section_keywords keys match no heading: {', '.join(sorted(unknown))}")
+    for slug, terms in keywords.items():
+        if not isinstance(terms, list) or not all(isinstance(t, str) for t in terms):
+            raise CorpusError(f"section_keywords for '{slug}' must be a list of strings")
 
     return [
         Chunk(
@@ -117,6 +128,7 @@ def chunks_from_document(meta: dict, body: str) -> list[Chunk]:
             text=text,
             source_type=meta["source_type"],
             sources=tuple(overrides.get(slug, meta["sources"])),
+            keywords=tuple(keywords.get(slug, ())),
         )
         for (heading, text), slug in zip(sections, slugs)
     ]

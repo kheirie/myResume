@@ -10,6 +10,10 @@ location: Beirut, Lebanon
 date_range: 2016-10 to 2016-12
 sources:
   - CV, Learning & Development version (2026)
+section_keywords:
+  role-overview: [mentoring, coaching, teacher training, supervision, education nonprofit, Lebanon]
+  coaching-and-supervising-teaching-fellows: [mentoring, teacher coaching, team supervision, professional development, feedback]
+  lesson-plan-review-and-observation-reports: [feedback, teacher evaluation, classroom observation, quality assurance, reporting, professional development]
 open_questions: []
 ---
 

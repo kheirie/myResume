@@ -10,6 +10,8 @@ date_range: 2008-09 to 2013-12
 sources:
   - CV, Data Science version (2026)
   - Clarifications from Kheirie (2026-10-12)
+section_keywords:
+  bsc-and-msc-in-computer-communication-engineering: [engineering degree, bachelor's degree, master's degree, BSc, MSc, computer engineering, communications engineering, telecommunications, undergraduate, Lebanon]
 open_questions: []
 ---
 

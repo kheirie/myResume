@@ -6,6 +6,17 @@ source_type: cv
 sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
+section_keywords:
+  programming-languages: [programming, coding, scripting, data analysis]
+  machine-learning-skills: [machine learning, ML, statistics, forecasting, deep learning]
+  nlp-skills: [natural language processing, text analytics, text mining, language models]
+  generative-ai-skills: [GenAI, AI agents, agentic AI, LLM applications]
+  mlops-and-cloud-skills: [MLOps, DevOps, cloud computing, containerization, CI/CD, version control, deployment]
+  data-skills: [data collection, web scraping, databases, graph databases, data visualization, vector search]
+  teaching-coaching-and-course-design-skills: [mentoring, coaching, feedback, instructional design, training, interviewing, evaluation]
+  data-and-reporting-skills: [data analysis, analytics, reporting, data visualization, spreadsheets]
+  digital-tools: [LMS, e-learning, learning management system, office tools, presentation tools]
+  spoken-languages: [languages, multilingual, fluency, French, English, Arabic]
 open_questions: []
 ---
 

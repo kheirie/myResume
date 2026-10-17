@@ -37,7 +37,9 @@ SUBJECT_NAME = re.compile(r"\b(?:Kheirie(?:['\u2019]s)?|El Hariri)\b", re.IGNORE
 # answerable question is blocked and 3 of 4 off-topic questions stop here,
 # including "earliest start date", which the 8B model answered with a made-up
 # date (prompt v1/v2) when the threshold was 0.50. Kheirie's choice.
-ABSTAIN_BELOW = 0.55
+# Raised to 0.56 on 2026-10-17 (Kheirie's choice): section keywords lifted "earliest start date"
+# to 0.551; at 0.56 no answerable question is blocked and 3 of 4 off-topic ones stop here.
+ABSTAIN_BELOW = 0.56
 
 
 def remove_subject_name(text: str) -> str:
@@ -99,8 +101,12 @@ def text_for_embedding(chunk: Chunk) -> str:
 
     "Kheirie built preprocessing pipelines..." alone does not say Sanofi;
     with the document title prepended, "What did Kheirie do at Sanofi?" can match it.
+    Section keywords are appended for matching only; the LLM and passages never see them.
     """
-    return remove_subject_name(f"{chunk.doc_title}\n{chunk.heading}\n{chunk.text}")
+    text = f"{chunk.doc_title}\n{chunk.heading}\n{chunk.text}"
+    if chunk.keywords:
+        text += "\nKeywords: " + ", ".join(chunk.keywords)
+    return remove_subject_name(text)
 
 
 class Retriever:

@@ -99,6 +99,15 @@ def test_chunks_get_ids_and_default_sources():
     assert first.sources == ("CV (2026)",)
 
 
+def test_section_keywords_attach_to_their_section_only():
+    meta, body = parse_document(DOC)
+    meta["section_keywords"] = {"role-overview": ["employment", "work history"]}
+    role, about = chunks_from_document(meta, body)
+    assert role.keywords == ("employment", "work history")
+    assert about.keywords == ()
+    assert "employment" not in role.text  # keywords never become part of the section text
+
+
 def test_section_sources_override_document_sources():
     meta, body = parse_document(DOC)
     about = chunks_from_document(meta, body)[1]
@@ -113,8 +122,17 @@ def test_section_sources_override_document_sources():
         lambda meta: meta.update(status="draft"),
         lambda meta: meta.update(open_questions=["Still unresolved?"]),
         lambda meta: meta.update(section_sources={"no-such-heading": ["x"]}),
+        lambda meta: meta.update(section_keywords={"no-such-heading": ["x"]}),
+        lambda meta: meta.update(section_keywords={"role-overview": "nlp, data science"}),
     ],
-    ids=["missing-key", "not-approved", "open-questions", "typo-in-section-sources"],
+    ids=[
+        "missing-key",
+        "not-approved",
+        "open-questions",
+        "typo-in-section-sources",
+        "typo-in-section-keywords",
+        "keywords-not-a-list",
+    ],
 )
 def test_invalid_documents_are_rejected(break_rule):
     meta, body = parse_document(DOC)

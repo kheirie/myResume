@@ -15,6 +15,12 @@ sources:
 section_sources:
   about-sanofi:
     - Sanofi official website, https://www.sanofi.com/en/about-us (retrieved 2026-10-12)
+section_keywords:
+  role-overview: [pharmaceutical, pharma, healthcare, life sciences, interim, contract, research and development, R&D]
+  about-sanofi: [company profile, pharmaceutical, biopharma, healthcare]
+  extractive-summarization-of-medicine-and-drug-documents: [text summarization, document summarization, natural language processing, NLP, pharmaceutical, biomedical documents, healthcare, transformer fine-tuning, deep learning, model evaluation, ROUGE]
+  text-preprocessing-and-report-generation-pipelines: [text preprocessing, data cleaning, NLP pipeline, document processing, reporting, automation, regular expressions]
+  technologies-used-at-sanofi: [tools, tech stack, NLP libraries]
 open_questions: []
 ---
 
