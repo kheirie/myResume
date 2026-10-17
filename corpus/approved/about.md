@@ -7,7 +7,14 @@ sources:
   - CV, Data Science version (2026)
   - CV, Learning & Development version (2026)
   - Clarifications from Kheirie (2026-10-12 to 2026-10-16)
+section_sources:
+  soft-skills:
+    - Clarifications from Kheirie (2026-10-17)
+  job-interests:
+    - Clarifications from Kheirie (2026-10-17)
 section_keywords:
+  soft-skills: [soft skills, personal qualities, strengths, communication skills, analytical skills, independence, people skills, flexibility, creative thinking]
+  job-interests: [target roles, job search, looking for, career goals, desired position, open to, next role, ideal job, role preferences]
   professional-summary: [career summary, profile, overview, years of experience, data scientist, teaching background]
   data-science-profile: [data science expertise, machine learning, statistics, time series forecasting, transformers, large language models, LLM, retrieval-augmented generation, AI agents, model evaluation, reproducibility, technical communication]
   data-science-roles: [work history, employment history, data scientist experience]
@@ -45,6 +52,12 @@ Kheirie has held four education roles. Since July 2026, Kheirie has worked as a 
 
 ## Degrees
 Kheirie holds four degrees. Kheirie earned an Applied MSc in Data Science & Artificial Intelligence from Data ScienceTech Institute (DSTI) in Paris, France, studying there from September 2023 to December 2025. Kheirie completed an MA by Research in Social Sciences at the University of Akureyri in Iceland, from September 2017 to February 2019. Kheirie earned an MSc in Computer and Communication Engineering at Rafic Hariri University in Lebanon (January 2012 to December 2013), after a BSc in Computer and Communication Engineering there (September 2008 to December 2011).
+
+## Soft skills
+Kheirie lists the following soft skills: communication, analysis, autonomy, interpersonal skills, creativity, and adaptability.
+
+## Job interests
+Kheirie is interested in roles in generative AI, data science, machine learning, and AI engineering, such as Data Scientist and AI Engineer. Kheirie is also interested in curriculum design in the fields Kheirie works in, and in teaching relevant to Kheirie's experience.
 
 ## Nationality
 Kheirie has French nationality.

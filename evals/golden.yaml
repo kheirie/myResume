@@ -1,5 +1,5 @@
 # Golden set for the approved corpus supplied on 2026-10-13.
-# 36 answerable questions and 9 unanswerable questions.
+# 38 answerable questions and 9 unanswerable questions.
 
 
 - question: "How would you summarize Kheirie's professional background and main areas of expertise?"
@@ -547,3 +547,24 @@
     extractive summarization (ROUGE-1 47%, ROUGE-2 25%). At Braincities, the
     NLP-based ENEL job matching with a fine-tuned Sentence-BERT (90% accuracy).
     The QuantCube agentic RAG tool may be added. Missing a project is incomplete.
+
+# Added 2026-10-17: Kheirie's own soft-skills list and job interests (clarifications).
+- question: "What kind of role is Kheirie looking for?"
+  answerable: true
+  expected_sources:
+    - about#job-interests
+  notes: >-
+    Expected: Kheirie's stated interests: generative AI, data science, machine
+    learning and AI engineering roles (such as Data Scientist and AI Engineer),
+    plus curriculum design and teaching related to Kheirie's fields. Presented
+    as interests, not qualifications. Not allowed: salary, location, remote or
+    seniority preferences, which are not stated.
+
+- question: "What are Kheirie's soft skills?"
+  answerable: true
+  expected_sources:
+    - about#soft-skills
+  notes: >-
+    Expected: Kheirie lists communication, analysis, autonomy, interpersonal
+    skills, creativity and adaptability. Attributed to Kheirie ("Kheirie
+    lists"), not stated as proven. Not allowed: invented examples or ratings.
