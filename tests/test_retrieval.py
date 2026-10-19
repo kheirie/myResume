@@ -163,7 +163,8 @@ def test_should_abstain_below_threshold(similarity, abstain):
 
 @pytest.mark.parametrize(
     "question",
-    ["Tell me about Kheirie", "Who is Kheirie?", "Tell me about Kheirie's background", "Kheirie", "tell me about kheirie"],
+    ["Tell me about Kheirie", "Who is Kheirie?", "Tell me about Kheirie's background", "Kheirie", "tell me about kheirie",
+     "Tell me more about her", "What does she do?"],
 )
 def test_questions_with_no_topic_become_an_overview_query(question):
     assert expand_overview_query(remove_subject_name(question)) == OVERVIEW_QUERY
@@ -171,7 +172,8 @@ def test_questions_with_no_topic_become_an_overview_query(question):
 
 @pytest.mark.parametrize(
     "question",
-    ["What is Kheirie's background in NLP?", "Tell me about Kheirie's teaching", "MLflow?"],
+    ["What is Kheirie's background in NLP?", "Tell me about Kheirie's teaching", "MLflow?",
+     "Tell me more about her teaching"],
 )
 def test_questions_with_a_topic_keep_their_own_words(question):
     cleaned = remove_subject_name(question)

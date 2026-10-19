@@ -55,7 +55,7 @@ def remove_subject_name(text: str) -> str:
 # and the remaining slots come from searching OVERVIEW_QUERY.
 FILLER_WORDS = {
     "a", "about", "an", "background", "can", "describe", "do", "does", "give", "her", "introduce",
-    "is", "know", "me", "of", "overview", "please", "profile", "something", "summarise", "summarize",
+    "is", "know", "me", "more", "of", "overview", "please", "profile", "she", "something", "summarise", "summarize",
     "summary", "tell", "the", "us", "what", "who", "you",
 }
 OVERVIEW_CHUNK_IDS = (
