@@ -1,6 +1,6 @@
 ---
 id: exp-quantcube
-title: Junior Data Scientist (work-study), QuantCube Technology
+title: Junior Data Scientist, QuantCube Technology
 status: approved
 source_type: cv
 organization: QuantCube Technology
@@ -23,7 +23,7 @@ section_keywords:
   agentic-rag-research-tool-for-explaining-indicators: [retrieval-augmented generation, LLM, large language models, generative AI, GenAI, AI agents, agentic AI, explainability, economic indicators]
   data-pipelines-and-model-evaluation: [ETL, data collection, data preprocessing, web scraping, data cleaning, model evaluation, benchmarking, validation, RMSE]
   experiment-tracking-and-model-monitoring: [MLOps, experiment tracking, model versioning, version control, model monitoring, reproducibility]
-  technologies-used-at-quantcube-technology: [tools, tech stack, libraries, frameworks, LLM, web scraping, MLOps]
+  technologies-used-at-quantcube-technology: [tools, tech stack, libraries, frameworks, web scraping, MLOps]
 open_questions: []
 ---
 
@@ -40,7 +40,7 @@ At QuantCube Technology, within the NLP team, Kheirie built PMI (Purchasing Mana
 At QuantCube Technology, with the macro team, Kheirie designed and evaluated statistical and machine learning models to estimate Saudi Arabia's Consumer Price Index (CPI). The models achieved 98% correlation with the official benchmark.
 
 ## Agentic RAG research tool for explaining indicators
-At QuantCube Technology, within the NLP team, Kheirie developed an internal agentic RAG (retrieval-augmented generation) tool as Kheirie's own research project. Built with LangChain and Ollama, it explains variations in economic indicators. It was an internal research tool, not a customer-facing production system.
+At QuantCube Technology, within the NLP team, Kheirie explored and designed agentic RAG (retrieval-augmented generation) approaches to explain variations in economic indicators, as Kheirie's own research project. It was internal research, not a customer-facing production system.
 
 ## Data pipelines and model evaluation
 At QuantCube Technology, Kheirie built data collection and preprocessing pipelines using Selenium and BeautifulSoup for web scraping. Kheirie evaluated models against official benchmarks using correlation and RMSE.
@@ -49,4 +49,4 @@ At QuantCube Technology, Kheirie built data collection and preprocessing pipelin
 At QuantCube Technology, Kheirie tracked experiments and model versions with MLflow and Git. Kheirie also took part in monitoring models in pre-production.
 
 ## Technologies used at QuantCube Technology
-BERT, LangChain, Ollama, Selenium, BeautifulSoup, MLflow, Git.
+BERT, Selenium, BeautifulSoup, MLflow, Git.

@@ -77,9 +77,9 @@
     - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
   notes: >-
     Tricky case: distinguish research work from a production deployment.
-    Expected: at QuantCube, Kheirie developed an internal agentic RAG tool as
-    Kheirie's own research project, using LangChain and Ollama to explain
-    variations in economic indicators. The documented tool was internal
+    Expected: at QuantCube, Kheirie explored and designed agentic RAG
+    approaches as Kheirie's own research project, to explain variations in
+    economic indicators. The documented work was internal
     research, not a customer-facing production system. Do not generalize this
     into a claim that Kheirie has never deployed any other system, or invent
     user counts, deployment infrastructure, or team-management responsibilities.
@@ -151,10 +151,9 @@
     Tricky case: a listed skill is not evidence of professional use.
     Expected: LangGraph is listed among Kheirie's generative AI skills, but
     professional use of LangGraph is not established by the supplied role
-    descriptions. The documented QuantCube RAG tool names LangChain and Ollama.
-    Give a qualified answer rather than an unsupported yes or an assertion
-    that Kheirie has never used LangGraph professionally. If mentioning the
-    QuantCube implementation, also cite its RAG section.
+    descriptions. No role section names LangChain, LangGraph or Ollama. Give a qualified answer rather than an unsupported yes or an
+    assertion that Kheirie has never used LangGraph professionally. If
+    mentioning QuantCube, also cite the section used.
 
 - question: "Which languages does Kheirie speak, and at what proficiency levels?"
   answerable: true
@@ -196,7 +195,7 @@
   abstain_type: near_miss
   notes: >-
     Tricky case: avoid transferring a general skill into a specific project.
-    The RAG section names LangChain and Ollama but no vector database. The
+    The RAG section names no tools and no vector database. The
     skills file mentions vector databases and Neo4j certification; neither
     establishes which database the QuantCube tool used. Do not guess Neo4j,
     FAISS, Chroma, Pinecone, or any other technology.
@@ -518,8 +517,8 @@
     Expected: Kheirie's CV lists AWS (EC2, S3, Lambda), Docker, and GitHub
     CI/CD, but no section documents senior or cloud architecture work, so the
     materials do not support the fit. Not allowed: "experience with AWS", or
-    AWS or Docker used at QuantCube (its tools are BERT, LangChain, Ollama,
-    Selenium, BeautifulSoup, MLflow, Git). Never a bare yes.
+    AWS or Docker used at QuantCube (its tools are BERT, Selenium,
+    BeautifulSoup, MLflow, Git). Never a bare yes.
 
 - question: "Could Kheirie work as an NLP engineer?"
   answerable: true
