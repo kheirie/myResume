@@ -295,7 +295,7 @@ pytest -k quota   # one area
 ## Project structure
 
 ```
-myResume/
+myResumeBot/
 ├── app.py                    # Streamlit web chat (thin: all logic lives in the package)
 ├── corpus/approved/          # the ONLY content the bot can use, one Markdown file per topic
 ├── evals/
@@ -325,8 +325,8 @@ myResume/
 [Ollama](https://ollama.com) with `llama3.1:8b`. A free Groq key works instead.
 
 ```bash
-git clone https://github.com/kheirie/myResume.git
-cd myResume
+git clone https://github.com/kheirie/myResumeBot.git
+cd myResumeBot
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,app]"
 cp .env.example .env            # optional: change providers and models
