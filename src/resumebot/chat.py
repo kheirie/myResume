@@ -19,6 +19,7 @@ from datetime import date
 from typing import Callable, Protocol
 
 from resumebot.answering import MAX_QUESTION_CHARS, NOT_FOUND, TOO_LONG, Answer
+from resumebot.embeddings import DEFAULT_MODEL
 from resumebot.retrieval import SearchResult
 
 AI_ANSWERS_PER_DAY = 3
@@ -29,8 +30,10 @@ PASSAGES_SHOWN = 2  # at most
 # away it was mostly noise, such as a company description.
 PASSAGE_CLOSE_MARGIN = 0.05
 PASSAGES_NOTE = (
-    f"You have used today's {AI_ANSWERS_PER_DAY} AI answers. Here are the passages from "
-    "Kheirie's approved materials that best match your question:"
+    f"You have used today's {AI_ANSWERS_PER_DAY} AI answers, so I'm switching to similarity matching: "
+    f"no language model writes the answer. Your question is compared with each section of Kheirie's "
+    f"approved materials using the {DEFAULT_MODEL} embedding model and cosine similarity. "
+    "Here are the best-matching passages, word for word:"
 )
 UNAVAILABLE_NOTE = (
     "AI answers are not available right now. Here are the passages from Kheirie's approved "
