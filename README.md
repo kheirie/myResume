@@ -238,7 +238,7 @@ flowchart TB
 - **Passages as the fallback.** After the limit, or when every model is busy, the chat shows the
   best one or two corpus sections word for word. They're free, instant, and can't invent anything.
 - **In-memory cache** of 500 questions. Repeated questions, such as the example buttons, cost no tokens.
-- Refusals and "not found" answers don't count against the allowance.
+- Repeated questions, and questions that match nothing in my materials, don't count.
 
 ---
 
