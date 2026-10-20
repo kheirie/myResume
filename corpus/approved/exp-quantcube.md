@@ -40,7 +40,7 @@ At QuantCube Technology, within the NLP team, Kheirie built PMI (Purchasing Mana
 At QuantCube Technology, with the macro team, Kheirie designed and evaluated statistical and machine learning models to estimate Saudi Arabia's Consumer Price Index (CPI). The models achieved 98% correlation with the official benchmark.
 
 ## Agentic RAG research tool for explaining indicators
-At QuantCube Technology, within the NLP team, Kheirie explored and designed agentic RAG (retrieval-augmented generation) approaches to explain variations in economic indicators, as Kheirie's own research project. It was internal research, not a customer-facing production system.
+At QuantCube Technology, within the NLP team, Kheirie explored and researched agentic RAG (retrieval-augmented generation) approaches to explain variations in economic indicators, as Kheirie's own research project. It was internal research, not a customer-facing production system.
 
 ## Data pipelines and model evaluation
 At QuantCube Technology, Kheirie built data collection and preprocessing pipelines using Selenium and BeautifulSoup for web scraping. Kheirie evaluated models against official benchmarks using correlation and RMSE.

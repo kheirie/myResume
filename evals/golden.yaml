@@ -77,7 +77,7 @@
     - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
   notes: >-
     Tricky case: distinguish research work from a production deployment.
-    Expected: at QuantCube, Kheirie explored and designed agentic RAG
+    Expected: at QuantCube, Kheirie explored and researched agentic RAG
     approaches as Kheirie's own research project, to explain variations in
     economic indicators. The documented work was internal
     research, not a customer-facing production system. Do not generalize this
