@@ -264,7 +264,7 @@ python -m resumebot eval-answers --provider ollama   # runs every question end-t
 - **hit@k:** how often all the expected sections are in the top k results.
 - **MRR (mean reciprocal rank):** how high the first correct section ranks, on average.
 
-Answer reports land in `evals/reports/`. I grade them by hand for content, scope and fabrication.
+Answer reports land in `evals/reports/`. Each answer is graded against the golden notes for content, scope and fabrication.
 
 **Latest results:**
 
@@ -281,7 +281,7 @@ I also tried MMR diversity, per-document caps and larger k to fix list questions
 documents. None of them helped, and some broke other questions, so I rejected them. The numbers
 are in the commit history.
 
-**Unit tests:** about 200 pytest tests. Most use fake embedders and fake LLMs, so they run in a few
+**Unit tests (pytest):** most use fake embedders and fake LLMs, so they run in a few
 seconds without downloading models. Integrity tests run against the real corpus and golden set,
 for example: "every expected source exists" and "summary sections match their source sections".
 
@@ -300,7 +300,7 @@ myResumeBot/
 ├── corpus/approved/          # the ONLY content the bot can use, one Markdown file per topic
 ├── evals/
 │   ├── golden.yaml           # 47 golden questions with expected sources
-│   └── reports/              # answer reports and hand-graded results per prompt version
+│   └── reports/              # answer reports and graded results (kept private, not in the repo)
 ├── src/resumebot/
 │   ├── corpus.py             # load, validate and split the corpus into chunks
 │   ├── embeddings.py         # bi-encoder embeddings (fastembed, ONNX, CPU)
@@ -449,8 +449,8 @@ notes and clarifications. Its rules show up in the code and tests of this reposi
 - **Measured, not assumed.** Every retrieval or prompt change had to improve the golden-set
   evaluation to be kept. Several suggested techniques were tested and rejected because the
   numbers got worse: MMR diversity, per-document caps and a larger k.
-- **Checked against the source.** I graded the evaluation reports by hand for accuracy, scope and
-  fabrication. Anything not supported by my materials was corrected.
+- **Checked against the source.** I reviewed the graded evaluation reports, checking accuracy, scope
+  and fabrication. Anything not supported by my materials was corrected.
 - **Guarded by tests.** Every change, mine or AI-assisted, had to pass the test suite, including
   integrity tests against the real corpus and golden set. The suite caught real bugs before they
   reached the live app.
