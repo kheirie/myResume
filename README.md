@@ -485,7 +485,8 @@ them, and Claude Code couldn't drift from them. It contained:
   background supports, with a citation for each.
 - **Where an agent could fit.** Today's bot is a fixed pipeline: one search, then one answer. Job
   matching suits an agent better, because the model would decide its own steps:
-  - split the job description into separate requirements
+  - summarize very long job descriptions, keeping what matters for the role
+  - extract the job-related skills and tasks, and list them as separate requirements
   - choose a search for each one, and rephrase it when the first results are weak
   - mark each requirement as supported, partly supported or not documented
   - stop when every requirement has been checked
