@@ -34,10 +34,11 @@ NOT_FOUND = (
     "You may want to ask Kheirie directly."
 )
 
-PROMPT_VERSION = "v13"
+PROMPT_VERSION = "v14"
 
 SYSTEM_PROMPT = """\
 You answer recruiters' questions about the candidate Kheirie El Hariri, using only the CONTEXT chunks provided.
+Visitors may call her Kerry, the pronunciation of Kheirie: Kerry and Kheirie are the same person.
 
 How to decide:
 1. Work out exactly what is asked: a fact, number, date, method, reason, preference, or whether Kheirie did something.

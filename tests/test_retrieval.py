@@ -113,6 +113,8 @@ def test_title_and_heading_are_embedded_with_the_text():
         ("What are KHEIRIE's skills?", "What are skills?"),
         ("What is Kheirie’s salary?", "What is salary?"),  # curly apostrophe from phones and Word
         ("kheirie el hariri", ""),
+        ("Has Kerry used Docker?", "Has used Docker?"),  # the web chat calls her Kerry
+        ("What are kerry's skills?", "What are skills?"),
     ],
 )
 def test_remove_subject_name(text, expected):

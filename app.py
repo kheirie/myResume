@@ -24,8 +24,8 @@ from resumebot.reranking import FastEmbedReranker  # noqa: E402
 from resumebot.retrieval import Retriever  # noqa: E402
 
 DESCRIPTION = f"""\
-Ask about Kheirie El Hariri's experience, skills, education, projects, and writing.
-Answers come only from Kheirie's approved materials.
+Ask about Kerry's experience, skills, education, projects, and writing.
+Answers come only from Kerry's approved materials.
 When something is not documented, the assistant says so instead of guessing.
 Each visitor gets {AI_ANSWERS_PER_DAY} AI answers per day; after that, the chat shows the best-matching passages.
 """
@@ -34,11 +34,11 @@ Each visitor gets {AI_ANSWERS_PER_DAY} AI answers per day; after that, the chat 
 SHOW_MODEL = os.environ.get("SHOW_MODEL", "1") == "1"
 
 EXAMPLES = [
-    "What NLP work has Kheirie done, and with what results?",
-    "Has Kheirie built a RAG system?",
-    "What teaching or coaching experience does Kheirie have?",
-    "What degrees does Kheirie hold?",
-    "Has Kheirie used Docker in a job?",
+    "What NLP work has Kerry done, and with what results?",
+    "Has Kerry built a RAG system?",
+    "What teaching or coaching experience does Kerry have?",
+    "What degrees does Kerry hold?",
+    "Has Kerry used Docker in a job?",
 ]
 
 
@@ -74,8 +74,8 @@ def reply(chat: Chat, question: str) -> str:
     return shown
 
 
-st.set_page_config(page_title="Ask about Kheirie El Hariri", page_icon="💬")
-st.title("Ask about Kheirie El Hariri")
+st.set_page_config(page_title="Ask about Kerry", page_icon="💬")
+st.title("Ask about Kerry")
 st.markdown(DESCRIPTION)
 chat, llm = build_chat()
 if SHOW_MODEL:
@@ -95,7 +95,7 @@ if not st.session_state.messages:
         if st.button(text, key=text):
             example = text
 
-typed = st.chat_input(f"Ask about Kheirie's background (max {MAX_QUESTION_CHARS} characters)", max_chars=MAX_QUESTION_CHARS)
+typed = st.chat_input(f"Ask about Kerry's background (max {MAX_QUESTION_CHARS} characters)", max_chars=MAX_QUESTION_CHARS)
 question = typed or example
 if question:
     st.session_state.messages.append({"role": "user", "content": question})
