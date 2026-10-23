@@ -12,6 +12,11 @@ section_sources:
     - Clarifications from Kheirie (2026-10-17)
   job-interests:
     - Clarifications from Kheirie (2026-10-17)
+  nationality:
+    - CV, Data Science version (2026)
+    - CV, Learning & Development version (2026)
+    - Clarifications from Kheirie (2026-10-12 to 2026-10-16)
+    - Clarifications from Kheirie (2026-10-23)
 section_keywords:
   soft-skills: [soft skills, personal qualities, strengths, communication skills, analytical skills, independence, people skills, flexibility, creative thinking]
   job-interests: [target roles, job search, looking for, career goals, desired position, open to, next role, ideal job, role preferences]
@@ -60,7 +65,7 @@ Kheirie lists the following soft skills: communication, analysis, autonomy, inte
 Kheirie is interested in roles in generative AI, data science, machine learning, and AI engineering, such as Data Scientist and AI Engineer. Kheirie is also interested in curriculum design in the fields Kheirie works in, and in teaching relevant to Kheirie's experience.
 
 ## Nationality
-Kheirie has French nationality.
+Kheirie has French nationality. As a French national, Kheirie does not need visa sponsorship to work in France or elsewhere in the EU.
 
 ## International background
 Kheirie has lived and worked in Lebanon, Iceland, and France, and works in English, French, and Arabic.

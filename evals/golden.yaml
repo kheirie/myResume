@@ -417,12 +417,11 @@
   expected_sources:
     - about#nationality
   notes: >-
-    Grounding policy (Q44): common, well-established general knowledge may
-    be applied to a cited fact, if marked as such. Expected: Kheirie has
-    French nationality (cited); as general information, French nationals do
-    not need visa sponsorship to work in France or elsewhere in the EU.
-    Not allowed: guesses about Kheirie personally, such as willingness to
-    relocate or work preferences.
+    Expected (about#nationality, Q94, 2026-10-23): Kheirie has French
+    nationality and, as a French national, does not need visa sponsorship
+    to work in France or elsewhere in the EU. Both are approved facts, so no
+    "As general information" marker is needed. Not allowed: guesses about
+    Kheirie personally, such as willingness to relocate or work preferences.
 
 - question: "How many students did Kheirie teach at Teach For Lebanon?"
   answerable: false
