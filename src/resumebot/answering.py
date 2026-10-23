@@ -30,8 +30,8 @@ MAX_QUESTION_CHARS = 300
 TOO_LONG = f"Please keep your question under {MAX_QUESTION_CHARS} characters."
 
 NOT_FOUND = (
-    "I couldn't find that in Kheirie's approved materials. "
-    "You may want to ask Kheirie directly."
+    "I couldn't find that in the approved materials. "
+    "You may want to ask Kerry directly."
 )
 
 PROMPT_VERSION = "v14"
