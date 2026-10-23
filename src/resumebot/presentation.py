@@ -7,7 +7,21 @@ required and validated in `answering.py`, and the eval reports list them.
 
 from __future__ import annotations
 
+import re
+from dataclasses import replace
+
 from resumebot.answering import Answer
+
+# The web chat calls the candidate Kerry, how Kheirie is pronounced (Kheirie, 2026-10-23).
+# The name is swapped here, not in the prompt: prompt v15 asked the model to write Kerry
+# and lost quality (25/37 expected sources vs 30/38 for v14 on Ollama).
+_CANDIDATE_NAME = re.compile(r"\bKheirie(?: El Hariri)?\b")
+DISPLAY_NAME = "Kerry"
+
+
+def use_display_name(text: str) -> str:
+    """Kheirie (and the full name) becomes Kerry; "Kheirie's" becomes "Kerry's"."""
+    return _CANDIDATE_NAME.sub(DISPLAY_NAME, text)
 
 
 def format_answer(answer: Answer, show_model: bool = False) -> str:
@@ -15,7 +29,10 @@ def format_answer(answer: Answer, show_model: bool = False) -> str:
 
     The line also says when a fallback answered (and which providers failed first),
     when the answer came from the cache, and which models failed when none answered.
+    Model-written answers say Kerry; passages stay word for word.
     """
+    if answer.answered_by:
+        answer = replace(answer, text=use_display_name(answer.text))
     if not show_model:
         return answer.text
     if answer.answered_by:
