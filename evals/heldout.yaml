@@ -1,0 +1,214 @@
+# Held-out questions (drafted 2026-10-23, reviewed by Kheirie).
+#
+# Measurement only. Never change the threshold, prompt, keywords or corpus because of a
+# result on this file: tuning on it would turn it into a second golden set, and its
+# numbers would stop saying how the bot does on questions it has never seen.
+# Same format as golden.yaml. Wordings differ from every golden question.
+
+# --- Answerable: facts --------------------------------------------------------
+
+- question: "Where did Kheirie study engineering, and when?"
+  answerable: true
+  match: any
+  expected_sources:
+    - edu-rhu#bsc-and-msc-in-computer-communication-engineering
+    - about#degrees
+  notes: >-
+    Expected: a BSc (September 2008 to December 2011) and an MSc (January 2012
+    to December 2013) in Computer and Communication Engineering at Rafic Hariri
+    University in Mechref, Lebanon.
+
+- question: "What was Kheirie's master's research in Iceland about?"
+  answerable: true
+  expected_sources:
+    - edu-akureyri#ma-research-topic-syrian-students-in-icelandic-schools
+  notes: >-
+    Expected: the MA by Research at the University of Akureyri studied "Syrian
+    Students in Icelandic Schools", qualitative research including conducting
+    and analyzing interviews. Do not call it an AI or data science degree.
+
+- question: "Which tools has Kheirie used for web scraping at work?"
+  answerable: true
+  expected_sources:
+    - exp-quantcube#data-pipelines-and-model-evaluation
+    - exp-braincities#job-matching-project-for-enel
+  notes: >-
+    Expected: Selenium and BeautifulSoup at QuantCube Technology, and
+    BeautifulSoup at Braincities Lab (scraping job pages for the ENEL project).
+    Do not credit Kheirie with the ENEL data engineering.
+
+- question: "Has Kheirie worked in the pharmaceutical industry?"
+  answerable: true
+  expected_sources:
+    - exp-sanofi#role-overview
+  notes: >-
+    Expected: yes, as an NLP Data Scientist (interim) at Sanofi in
+    Chilly-Mazarin, France, from November 2021 to March 2022, in the R&D NLP
+    team, as part of a team working on extractive summarization. Keep the team
+    framing.
+
+- question: "What courses is Kheirie developing for the University of Akureyri?"
+  answerable: true
+  expected_sources:
+    - exp-akureyri-curriculum#designing-masters-level-ai-courses
+  notes: >-
+    Expected: two master's-level courses, "AI for Social Innovation" and
+    "Human Skills in the Era of AI: Critical Thinking, Creativity, and
+    Collaboration", both still in development. Do not say they have been taught.
+
+- question: "Has Kheirie given any lectures or presentations?"
+  answerable: true
+  match: any
+  expected_sources:
+    - exp-akureyri-curriculum#guest-lecture-on-using-ai-critically
+    - edu-akureyri#grant-and-presentations-from-the-ma-research
+  notes: >-
+    Expected: a guest lecture of about 100 minutes on using AI intelligently
+    and critically, in the Media History course at the University of Akureyri
+    (September 10, 2026); and two presentations in Akureyri in 2018 from the MA
+    research.
+
+- question: "What did Kheirie do as a mentor at Teach For Lebanon?"
+  answerable: true
+  expected_sources:
+    - exp-tfl-mentor#coaching-and-supervising-teaching-fellows
+    - exp-tfl-mentor#lesson-plan-review-and-observation-reports
+  notes: >-
+    Expected: as Temporary Educational Mentor (October to December 2016),
+    supervised and coached 13 teaching fellows, reviewed their weekly lesson
+    plans, and wrote monthly observation reports with development feedback.
+
+- question: "Which school subjects has Kheirie taught?"
+  answerable: true
+  expected_sources:
+    - exp-tfl-fellow#teaching-mathematics-and-computer-subjects-in-primary-school
+  notes: >-
+    Expected: mathematics and computer subjects to primary school students in
+    Grades 1 to 6, as a Teach For Lebanon Fellow. Mentioning the English course
+    at SÍMEY is fine if attributed correctly.
+
+- question: "In which countries has Kheirie lived and worked?"
+  answerable: true
+  expected_sources:
+    - about#international-background
+  notes: >-
+    Expected: Lebanon, Iceland, and France.
+
+# --- Answerable: skills listed on the CV (claims, not job evidence) ------------
+
+- question: "Does Kheirie know Docker?"
+  answerable: true
+  expected_sources:
+    - skills#mlops-and-cloud-skills
+  notes: >-
+    Expected: Kheirie's CV lists Docker among MLOps and cloud skills. No job
+    use of Docker is documented: do not say "experience with Docker".
+
+- question: "Can Kheirie work with graph databases?"
+  answerable: true
+  expected_sources:
+    - skills#data-skills
+  notes: >-
+    Expected: Kheirie's CV lists Neo4j (certified) among data skills. No job
+    use is documented; state it as a CV claim.
+
+- question: "Has Kheirie used PyTorch?"
+  answerable: true
+  expected_sources:
+    - skills#machine-learning-skills
+  notes: >-
+    Expected: Kheirie's CV lists PyTorch among machine learning skills. No role
+    documents PyTorch use; say so rather than claiming job experience.
+
+# --- Answerable: across sections ------------------------------------------------
+
+- question: "Does Kheirie have experience with Arabic text?"
+  answerable: true
+  match: any
+  expected_sources:
+    - exp-quantcube#pmi-nowcasting-with-arabic-and-english-sentiment-analysis
+    - about#nlp-projects
+  notes: >-
+    Expected: at QuantCube Technology, within the NLP team, BERT-based
+    sentiment analysis was applied to Arabic and English text for PMI
+    nowcasting indicators (80% and 88% correlation). Arabic is also Kheirie's
+    native language.
+
+- question: "What has Kheirie done with AI agents?"
+  answerable: true
+  match: any
+  expected_sources:
+    - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
+    - skills#generative-ai-skills
+  notes: >-
+    Expected: at QuantCube Technology, Kheirie explored and researched agentic
+    RAG approaches to explain variations in economic indicators, as internal
+    research, not a production system. The CV lists agents with LangChain,
+    LangGraph and LlamaIndex. Do not say Kheirie built or deployed an agent.
+
+# --- Answerable: judgment and overview ----------------------------------------
+
+- question: "Would Kheirie fit a learning and development role?"
+  answerable: true
+  match: any
+  expected_sources:
+    - about#learning-and-development-profile
+    - about#teaching-coaching-and-education-roles
+  notes: >-
+    Judgment based on the materials: teacher coaching, course design and
+    data-to-report work, and four education roles. Use "fits" or "matches",
+    never "qualified".
+
+- question: "Can you introduce Kheirie?"
+  answerable: true
+  expected_sources:
+    - about#professional-summary
+  notes: >-
+    Overview: data scientist in NLP and generative AI with over three years of
+    experience in finance and pharma, plus a background in teaching, teacher
+    coaching, and course design.
+
+# --- Off-topic: not in the materials --------------------------------------------
+
+- question: "What is Kheirie's date of birth?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Not in the materials. Decline and suggest asking Kheirie. Do not estimate
+    an age from degree dates.
+
+- question: "Does Kheirie have a driving licence?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    Not in the materials. Decline without guessing.
+
+- question: "Would Kheirie be willing to relocate to Germany?"
+  answerable: false
+  abstain_type: off_topic
+  notes: >-
+    A preference, never in the materials. EU nationality may be mentioned as
+    a documented fact, but willingness to relocate must not be inferred.
+
+# --- Near misses: the topic is documented, the detail is not ------------------
+
+- question: "What grade did Kheirie get at DSTI?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    The DSTI Applied MSc is documented; no grade is. Say so, and give the
+    documented degree facts.
+
+- question: "How many people were on the Sanofi summarization team?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    The team is documented; its size is not. Do not guess a number.
+
+- question: "What RMSE did Kheirie's models reach at QuantCube?"
+  answerable: false
+  abstain_type: near_miss
+  notes: >-
+    RMSE is documented as an evaluation metric, but no RMSE value is given.
+    The documented results are correlations (80%, 88%, 98%); do not present
+    them as RMSE.

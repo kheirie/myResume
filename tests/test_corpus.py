@@ -181,6 +181,27 @@ def test_every_golden_expected_source_exists():
     assert missing == []
 
 
+def test_every_heldout_expected_source_exists():
+    ids = {c.id for c in load_corpus(ROOT / "corpus" / "approved")}
+    heldout = yaml.safe_load((ROOT / "evals" / "heldout.yaml").read_text(encoding="utf-8"))
+    missing = [
+        (item["question"], source)
+        for item in heldout
+        for source in item.get("expected_sources", [])
+        if source not in ids
+    ]
+    assert missing == []
+
+
+def test_heldout_questions_are_not_golden_questions():
+    # A held-out question that is also in the golden set has been tuned on, so it measures nothing new.
+    def questions(name):
+        items = yaml.safe_load((ROOT / "evals" / name).read_text(encoding="utf-8"))
+        return {" ".join(i["question"].lower().split()) for i in items}
+
+    assert questions("heldout.yaml") & questions("golden.yaml") == set()
+
+
 def test_overview_sections_exist_in_the_real_corpus():
     from resumebot.retrieval import OVERVIEW_CHUNK_IDS
 

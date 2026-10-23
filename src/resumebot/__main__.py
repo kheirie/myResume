@@ -3,6 +3,9 @@ from pathlib import Path
 
 CORPUS_DIR = Path("corpus/approved")
 GOLDEN_PATH = Path("evals/golden.yaml")
+# Measurement only: never tune the threshold, prompt or keywords on these (see the file header).
+HELDOUT_PATH = Path("evals/heldout.yaml")
+QUESTION_SETS = {"golden": GOLDEN_PATH, "heldout": HELDOUT_PATH}
 
 
 def build_retriever(rerank: bool = True):
@@ -50,7 +53,7 @@ def ask(question: str, provider: str | None) -> None:
         print(f"rate limit: {remaining} tokens left this minute")
 
 
-def eval_answers(provider: str | None) -> None:
+def eval_answers(provider: str | None, question_set: str = "golden") -> None:
     from datetime import datetime
 
     from resumebot.answering import PROMPT_VERSION, Answerer
@@ -59,22 +62,25 @@ def eval_answers(provider: str | None) -> None:
     from resumebot.retrieval import ABSTAIN_BELOW
 
     llm = build_llm(provider)
-    results = run_answers(Answerer(build_retriever(), llm), load_golden(GOLDEN_PATH))
+    results = run_answers(Answerer(build_retriever(), llm), load_golden(QUESTION_SETS[question_set]))
     report_dir = Path("evals/reports")
     report_dir.mkdir(parents=True, exist_ok=True)
     label = f"{llm.label}, prompt {PROMPT_VERSION}, threshold {ABSTAIN_BELOW}"
     name = provider or "default"
     stamp = f"{datetime.now():%Y-%m-%d-%H%M}-{name}-prompt-{PROMPT_VERSION}"
+    if question_set != "golden":
+        stamp += f"-{question_set}"
+        label += f", {question_set} questions"
     path = report_dir / f"answers-{stamp}.md"
     path.write_text(answer_report(results, label), encoding="utf-8")
     print(answer_summary(results))
     print(f"\nFull report for review: {path}")
 
 
-def eval_retrieval(rerank: bool) -> None:
+def eval_retrieval(rerank: bool, question_set: str = "golden") -> None:
     from resumebot.evaluation import load_golden, report, run
 
-    results = run(build_retriever(rerank), load_golden(GOLDEN_PATH), k=6)
+    results = run(build_retriever(rerank), load_golden(QUESTION_SETS[question_set]), k=6)
     print(report(results, ks=[1, 3, 4, 6], thresholds=[0.50, 0.52, 0.54, 0.56, 0.58, 0.60, 0.62]))
 
 
@@ -96,6 +102,13 @@ def main() -> None:
     eval_cmd = commands.add_parser("eval-retrieval", help="measure retrieval against evals/golden.yaml")
     for cmd in (search_cmd, eval_cmd):
         cmd.add_argument("--no-rerank", action="store_true", help="skip the cross-encoder stage")
+    for cmd in (answers_cmd, eval_cmd):
+        cmd.add_argument(
+            "--questions",
+            choices=sorted(QUESTION_SETS),
+            default="golden",
+            help="question set: golden (default) or heldout (measurement only)",
+        )
     args = parser.parse_args()
 
     if args.command == "search":
@@ -103,9 +116,9 @@ def main() -> None:
     elif args.command == "ask":
         ask(args.question, args.provider)
     elif args.command == "eval-answers":
-        eval_answers(args.provider)
+        eval_answers(args.provider, args.questions)
     elif args.command == "eval-retrieval":
-        eval_retrieval(rerank=not args.no_rerank)
+        eval_retrieval(rerank=not args.no_rerank, question_set=args.questions)
 
 
 if __name__ == "__main__":
