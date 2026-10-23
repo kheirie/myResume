@@ -42,7 +42,7 @@ EXAMPLES = [
 ]
 
 
-@st.cache_resource(show_spinner="Loading Kheirie's materials...")
+@st.cache_resource(show_spinner="Loading the materials...")
 def build_chat():
     """Built once per server process and shared by every visitor."""
     retriever = Retriever(load_corpus(ROOT / "corpus" / "approved"), FastEmbedEmbedder(), reranker=FastEmbedReranker())
