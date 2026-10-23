@@ -60,9 +60,10 @@ flowchart LR
 
     Q(["Recruiter's question"]) --> R["Stage 1: score all 76 sections<br/>(cosine similarity)"]
     C -. vectors .-> R
-    R -->|"best match too weak"| N["'I couldn't find that<br/>in the approved materials'"]
-    R -->|"strong enough"| RR["Stage 2: rerank the top 20<br/>(cross-encoder), keep 4"]
-    RR --> L["LLM writes a JSON answer<br/>with citations"]
+    R --> RR["Stage 2: rerank the top 20<br/>(cross-encoder), keep 4"]
+    RR --> TH{"Best stage-1 score<br/>≥ 0.56?"}
+    TH -->|"no: nothing is close enough"| N["'I couldn't find that<br/>in the approved materials'"]
+    TH -->|"yes"| L["LLM writes a JSON answer<br/>with citations"]
     L --> V["Code validates<br/>the citations"]
     V -->|"valid"| ANS(["Answer"])
     V -->|"none valid"| N
@@ -136,10 +137,11 @@ flowchart TB
     OV -->|yes| PIN["Pin the 3 profile sections<br/>+ search an overview query"]
     OV -->|no| S1
     PIN --> S1["<b>Stage 1: bi-encoder</b><br/>cosine similarity against all 76 sections<br/>(one matrix-vector product)"]
-    S1 --> TH{"Best similarity<br/>≥ 0.56?"}
+    S1 --> S2["<b>Stage 2: cross-encoder</b><br/>re-score the top 20<br/>(question + section read together)"]
+    S2 --> TOP["Keep the top 4 sections"]
+    TOP --> TH{"Best stage-1 similarity<br/>(over all 76 sections) ≥ 0.56?"}
     TH -->|no| AB["Abstain: no LLM call"]
-    TH -->|yes| S2["<b>Stage 2: cross-encoder</b><br/>re-score the top 20<br/>(question + section read together)"]
-    S2 --> TOP["Top 4 sections → LLM"]
+    TH -->|yes| LLM["All 4 sections → LLM"]
 ```
 
 - **Stage 1, bi-encoder** (`BAAI/bge-small-en-v1.5` via fastembed). Each section is turned into a
@@ -165,14 +167,33 @@ flowchart TB
   narrows the field, and the reranker orders the shortlist. 20 is a common default, and the
   golden set supports it: for 35 of the 38 answerable questions, all the expected sections are
   already in stage 1's top 20, and widening it to 30 adds none.
-- **Abstention threshold.** If the best stage-1 similarity is below **0.56**, the bot says it can't
-  find the answer without calling the LLM at all. It's a cheap, deterministic safety net. The LLM
-  remains the main judge.
+- **Abstention threshold.** After both stages, the code checks one number: the best stage-1
+  similarity over all 76 sections. If it is below **0.56**, the bot says it can't find the answer
+  without calling the LLM at all. It's a cheap, deterministic safety net, and the LLM remains the
+  main judge.
+  - *One check per question, not a filter on sections.* If the best match passes, all four
+    selected sections go to the LLM, even ones that score below 0.56 on their own; the LLM decides
+    which of them answer the question. If it fails, none do.
+  - *What it catches.* On the golden set it stops 3 of the 4 off-topic questions (such as "What is
+    the earliest date Kheirie could start a new job?", which the 8B model once answered with a
+    made-up date) and blocks none of the 38 answerable ones. Answerable questions score 0.596 and
+    up. Off-topic ones score 0.493 to 0.608: the salary question (0.608) passes and the LLM
+    declines it. All near-miss questions (0.639 to 0.794) are left to the LLM.
+  - *The order.* The reranker also runs for questions that are then refused. The check only uses
+    the stage-1 score, so running it first would give the same results; it is simply done after
+    retrieval.
+  - *Tried and rejected: a per-section cutoff.* Dropping sections below the threshold (before or
+    after reranking, at 0.56 or 0.50) left retrieval and the answer scores unchanged at best. At
+    0.56 it removed the teaching-roles section (0.541) from "What job roles would suit Kheirie?",
+    so the answer left out teaching.
 - **Why the reranker's scores aren't used for this.** Reranker scores are *not calibrated*: they
   are only meaningful for ordering the sections of one question. The same number doesn't mean
   the same relevance for two different questions. For example, the right section for a
-  semantic-search question scored −10.5, lower than the best section for any off-topic question
-  (−5.8). No fixed cut-off can work on such scores. Cosine similarity is stable enough across
+  semantic-search question scores −8.95, about the same as the best section for the off-topic
+  salary question (−8.93). Across the golden set, the best expected section of an answerable
+  question scores anywhere from −11.1 to +8.8, a range that covers every off-topic question's best
+  score (−11.3 to −8.9). No fixed cut-off can work on such scores. Cosine similarity is stable
+  enough across
   questions for one threshold.
 
 Three tricks I found by measuring:
@@ -189,7 +210,7 @@ can then match a section whose text never repeats the company name.
 ### 3. Answering: the LLM writes, the code decides
 
 The retrieved sections are passed to the LLM as labelled context. The model gets a strict system
-prompt, now in its 13th version and refined through evaluation. It must reply in JSON:
+prompt, now in its 14th version and refined through evaluation. It must reply in JSON:
 
 ```json
 {"answerable": true, "answer": "At QuantCube Technology, ...", "citations": ["exp-quantcube#pmi-nowcasting-..."]}
@@ -305,9 +326,9 @@ Answer reports land in `evals/reports/`. Each answer is graded against the golde
 
 | Measure | Result | Setup |
 |---|---|---|
-| Retrieval hit@4 | **95%** | 38 answerable questions, with reranker and section keywords (2026-10-17) |
+| Retrieval hit@4 | **95%** | 38 answerable questions, with reranker and section keywords (2026-10-23) |
 | Retrieval MRR | **0.84** | same |
-| Answerable questions answered | **38 / 38** | llama3.1:8b, prompt v13 (2026-10-17) |
+| Answerable questions answered | **38 / 38** | llama3.1:8b, prompt v14 (2026-10-23) |
 | Off-topic questions declined | **4 / 4** | same |
 | Near-miss questions declined | **3 / 5** | same |
 | Fabrications | **0** | gpt-oss-120b on Groq, prompt v4: 32 correct, 5 partial, 0 wrong (2026-10-15) |
