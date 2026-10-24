@@ -203,6 +203,7 @@ Three tricks I found by measuring:
 | My name appears in every section and almost every question, so it dominated short sections ("Kheirie has French nationality" matched salary questions) | Remove the name from embedded text and queries, like a zero-IDF word | hit@4: 64% → 79% |
 | "Who is Kheirie?" minus the name is "Who is?", which has nothing left to search for | Detect topic-less questions and pin the three profile sections | Overview questions get the summary, not trivia |
 | Recruiters use words the CV doesn't (e.g. "GenAI", "MLOps") | Hidden `section_keywords`: synonyms embedded for retrieval only, never shown to the LLM | hit@4: 89% → 94%, MRR 0.83 → 0.85 |
+| Short chat questions such as "did she do RAG?" fell below the threshold: "she" and a bare acronym leave little to match | Remove pronouns like the name, spell out acronyms with one meaning (RAG, NLP, MLOps…, but not AI or LLM, which pulled questions toward the articles), and add both forms to section keywords | 5 short questions added: 2 were rejected, now 5/5 hit; MRR 0.83 → 0.87 on 43 questions |
 
 The title and heading are also embedded along with each section. "What did Kheirie do at Sanofi?"
 can then match a section whose text never repeats the company name.
@@ -289,7 +290,6 @@ flowchart TB
   chat adds a note under it saying it is a saved answer that doesn't count. The cache empties
   whenever the app restarts.
 - Repeated questions, and questions that match nothing in my materials, don't count.
-
 ---
 
 ## Evaluation
@@ -327,8 +327,8 @@ Answer reports land in `evals/reports/`. Each answer is graded against the golde
 
 | Measure | Result | Setup |
 |---|---|---|
-| Retrieval hit@4 | **95%** | 38 answerable questions, with reranker and section keywords (2026-10-23) |
-| Retrieval MRR | **0.84** | same |
+| Retrieval hit@4 | **95%** | 43 answerable questions, with reranker, section keywords, pronoun removal and acronyms (2026-10-24) |
+| Retrieval MRR | **0.87** | same |
 | Answerable questions answered | **38 / 38** | llama3.1:8b, prompt v14 (2026-10-23) |
 | Off-topic questions declined | **4 / 4** | same |
 | Near-miss questions declined | **3 / 5** | same |
@@ -358,7 +358,7 @@ myResumeBot/
 │   ├── corpus.py             # load, validate and split the corpus into chunks
 │   ├── embeddings.py         # bi-encoder embeddings (fastembed, ONNX, CPU)
 │   ├── reranking.py          # cross-encoder reranker
-│   ├── retrieval.py          # two-stage search, name removal, overview routing, abstention
+│   ├── retrieval.py          # two-stage search, name and pronoun removal, acronyms, overview routing, abstention
 │   ├── answering.py          # system prompt, JSON validation, citation checks, cache
 │   ├── llm.py                # OpenAI-compatible client + fallback chain
 │   ├── chat.py               # public budget: daily quota, passages fallback

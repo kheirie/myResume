@@ -48,6 +48,63 @@ def remove_subject_name(text: str) -> str:
     return "\n".join(" ".join(line.split()) for line in lines).strip()
 
 
+# Pronouns in a question always mean the candidate, so like the name they carry no
+# information; in a short question they weigh a lot: "did she do RAG?" scored 0.543
+# (below the threshold), "did do RAG?" 0.634 (2026-10-24). "he" is included because
+# visitors may guess wrong. Questions only: the corpus never uses pronouns for her.
+SUBJECT_PRONOUNS = re.compile(r"\b(?:she|her|hers|herself|he|him|his|himself)\b", re.IGNORECASE)
+
+
+# A bare acronym gives a short question little to match: "did she do retrieval-augmented
+# generation (RAG)?" scored 0.740 against 0.634 for "did she do RAG?" (2026-10-24). Only
+# acronyms with one meaning in this corpus: CV (curriculum vitae or computer vision) and
+# MA are left out. So are AI and LLM, which the corpus mostly writes as words the
+# articles use: spelling them out pulled "What AI teaching ... experience" and "has she
+# used LLMs?" toward the articles, and both missed their sections (2026-10-24).
+ACRONYMS = {
+    "CPI": "consumer price index",
+    "DL": "deep learning",
+    "EFL": "English as a foreign language",
+    "ETL": "extract, transform, load",
+    "EU": "European Union",
+    "GenAI": "generative AI",
+    "HR": "human resources",
+    "L&D": "learning and development",
+    "LSTM": "long short-term memory",
+    "ML": "machine learning",
+    "MLOps": "machine learning operations",
+    "NLP": "natural language processing",
+    "PMI": "purchasing managers' index",
+    "R&D": "research and development",
+    "RAG": "retrieval-augmented generation",
+    "RMSE": "root mean squared error",
+    "RNN": "recurrent neural network",
+}
+_ACRONYM = re.compile(
+    r"(?<!\w)(" + "|".join(re.escape(a) for a in sorted(ACRONYMS, key=len, reverse=True)) + r")(s?)(?!\w)",
+    re.IGNORECASE,
+)
+_ACRONYM_KEYS = {a.lower(): a for a in ACRONYMS}
+
+
+def expand_acronyms(query: str) -> str:
+    """ "RAG" becomes "retrieval-augmented generation (RAG)", unless the question spells it out."""
+
+    def expand(match: re.Match) -> str:
+        acronym, plural = _ACRONYM_KEYS[match.group(1).lower()], match.group(2)
+        meaning = ACRONYMS[acronym]
+        if meaning.lower() in query.lower():
+            return match.group(0)
+        return f"{meaning} ({acronym}{plural})"  # plural on the acronym only, not "memorys"
+
+    return _ACRONYM.sub(expand, query)
+
+
+def prepare_query(query: str) -> str:
+    """The question as searched: without the candidate's name or pronouns, acronyms spelled out."""
+    return expand_acronyms(" ".join(SUBJECT_PRONOUNS.sub("", remove_subject_name(query)).split()))
+
+
 # "Tell me about Kheirie" minus the name is "Tell me about": nothing left to search
 # for, so it matched chunks titled "About Kheirie" (nationality, pronunciation)
 # instead of the professional summary. A question made only of these filler words
@@ -132,7 +189,7 @@ class Retriever:
         """Return the k most relevant chunks, best first."""
         if k < 1:
             raise ValueError("k must be at least 1")
-        query = remove_subject_name(query)
+        query = prepare_query(query)
         overview = is_overview_question(query)
         if overview:
             query = OVERVIEW_QUERY

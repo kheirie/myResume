@@ -1,5 +1,5 @@
 # Golden set for the approved corpus supplied on 2026-10-13.
-# 38 answerable questions and 9 unanswerable questions.
+# 43 answerable questions and 9 unanswerable questions (5 short pronoun and acronym questions added 2026-10-24).
 
 
 - question: "How would you summarize Kheirie's professional background and main areas of expertise?"
@@ -566,3 +566,58 @@
     Expected: Kheirie lists communication, analysis, autonomy, interpersonal
     skills, creativity and adaptability. Attributed to Kheirie ("Kheirie
     lists"), not stated as proven. Not allowed: invented examples or ratings.
+
+# Short questions with a pronoun and an acronym, as recruiters type them in the chat
+# (added 2026-10-24 after "did she do RAG?" fell below the threshold at 0.543).
+
+- question: "did she do RAG?"
+  answerable: true
+  match: any
+  expected_sources:
+    - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
+    - skills#generative-ai-skills
+  notes: >-
+    Expected: at QuantCube Technology, Kheirie explored and researched agentic
+    RAG approaches to explain variations in economic indicators, as Kheirie's
+    own internal research project; Kheirie's CV also lists RAG as a skill.
+    Not allowed: "built" or "part of a team", or calling it a production system.
+
+- question: "what are her NLP skills?"
+  answerable: true
+  expected_sources:
+    - skills#nlp-skills
+  notes: >-
+    Expected: the CV lists Transformers (Hugging Face), BERT, Sentence-BERT,
+    SpaCy, NLTK, semantic search and sentiment analysis. Presented as listed
+    skills, without proficiency levels.
+
+- question: "has she used LLMs?"
+  answerable: true
+  match: any
+  expected_sources:
+    - skills#generative-ai-skills
+    - exp-quantcube#agentic-rag-research-tool-for-explaining-indicators
+  notes: >-
+    Expected: Kheirie's CV lists large language models, RAG, agents and prompt
+    engineering; at QuantCube Technology, Kheirie explored agentic RAG
+    approaches as an internal research project. No invented production use.
+
+- question: "does she know MLOps?"
+  answerable: true
+  match: any
+  expected_sources:
+    - skills#mlops-and-cloud-skills
+    - exp-quantcube#experiment-tracking-and-model-monitoring
+  notes: >-
+    Expected: the CV lists MLflow, Git, GitHub (CI/CD), Docker and AWS (EC2,
+    S3, Lambda); the QuantCube experiment tracking section is the job evidence.
+    No proficiency levels.
+
+- question: "has he taught EFL?"
+  answerable: true
+  expected_sources:
+    - exp-simey#role-overview
+  notes: >-
+    Expected: yes, Kheirie was an English as a Foreign Language (EFL) teacher
+    at SÍMEY Lifelong Learning Centre in Iceland from September to October
+    2017. The answer uses she/her for Kheirie, not he.

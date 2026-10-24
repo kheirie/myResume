@@ -9,9 +9,9 @@ sources:
 section_keywords:
   programming-languages: [programming, coding, scripting, data analysis]
   machine-learning-skills: [machine learning, ML, statistics, forecasting, deep learning]
-  nlp-skills: [natural language processing, text analytics, text mining, language models]
-  generative-ai-skills: [GenAI, AI agents, agentic AI, LLM applications]
-  mlops-and-cloud-skills: [MLOps, DevOps, cloud computing, containerization, CI/CD, version control, deployment]
+  nlp-skills: [natural language processing, NLP, text analytics, text mining, language models]
+  generative-ai-skills: [GenAI, AI agents, agentic AI, LLM applications, large language models, LLMs, retrieval-augmented generation, RAG]
+  mlops-and-cloud-skills: [MLOps, machine learning operations, DevOps, cloud computing, containerization, CI/CD, version control, deployment]
   data-skills: [data collection, web scraping, databases, graph databases, data visualization, vector search]
   teaching-coaching-and-course-design-skills: [mentoring, coaching, feedback, instructional design, training, interviewing, evaluation]
   data-and-reporting-skills: [data analysis, analytics, reporting, data visualization, spreadsheets]

@@ -14,6 +14,9 @@ from resumebot.retrieval import (
     Retriever,
     SearchResult,
     expand_overview_query,
+    is_overview_question,
+    expand_acronyms,
+    prepare_query,
     remove_subject_name,
     text_for_embedding,
 )
@@ -119,6 +122,40 @@ def test_title_and_heading_are_embedded_with_the_text():
 )
 def test_remove_subject_name(text, expected):
     assert remove_subject_name(text) == expected
+
+
+@pytest.mark.parametrize(
+    "question, expected",
+    [
+        ("did she do RAG?", "did do retrieval-augmented generation (RAG)?"),
+        ("What are her NLP skills?", "What are natural language processing (NLP) skills?"),
+        ("Has Kerry worked in NLP ?", "Has worked in natural language processing (NLP) ?"),
+        ("has he taught EFL?", "has taught English as a foreign language (EFL)?"),
+        ("Who is she?", "Who is ?"),  # still an overview question
+        ("Where did Kheirie study?", "Where did study?"),  # "the" or "where" are not pronouns
+    ],
+)
+def test_prepare_query_removes_name_and_pronouns_and_spells_out_acronyms(question, expected):
+    assert prepare_query(question) == expected
+
+
+@pytest.mark.parametrize(
+    "question, expected",
+    [
+        ("any rag work?", "any retrieval-augmented generation (RAG) work?"),  # any case
+        ("RNNs or LSTMs?", "recurrent neural network (RNNs) or long short-term memory (LSTMs)?"),
+        ("R&D team", "research and development (R&D) team"),
+        ("retrieval-augmented generation (RAG)", "retrieval-augmented generation (RAG)"),  # already spelled out
+        ("AI and LLM work", "AI and LLM work"),  # left out on purpose
+        ("FRAGMENT", "FRAGMENT"),  # whole words only
+    ],
+)
+def test_expand_acronyms(question, expected):
+    assert expand_acronyms(question) == expected
+
+
+def test_who_is_she_is_an_overview_question():
+    assert is_overview_question(prepare_query("Who is she?"))
 
 
 def test_name_alone_does_not_decide_ranking():
