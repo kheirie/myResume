@@ -20,7 +20,7 @@ from typing import Callable, Protocol
 
 from resumebot.answering import MAX_QUESTION_CHARS, NOT_FOUND, TOO_LONG, Answer
 from resumebot.embeddings import DEFAULT_MODEL
-from resumebot.retrieval import SearchResult
+from resumebot.retrieval import SearchResult, is_follow_up_question
 
 AI_ANSWERS_PER_DAY = 3
 PASSAGES_SHOWN = 2  # at most
@@ -100,6 +100,20 @@ class PassageAnswerer:
         chunks = [best.chunk] + [h.chunk for h in others if h.score >= best.score - PASSAGE_CLOSE_MARGIN]
         passages = [f"**{c.heading}** ({c.doc_title})\n\n{c.text}" for c in chunks]
         return Answer("\n\n".join([note, *passages]), True, chunks, "passages")
+
+
+def with_previous_question(question: str, previous: str | None) -> str:
+    """A follow-up such as "more details?" is asked together with the previous question.
+
+    Nothing else about the conversation is sent, so this costs no extra model call and
+    the cache still works: the same two questions always make the same question.
+    Only when the two fit the length limit; otherwise the question is asked alone.
+    """
+    if previous and is_follow_up_question(question):
+        combined = f"{previous.strip()} {question.strip()}"
+        if len(combined) <= MAX_QUESTION_CHARS:
+            return combined
+    return question
 
 
 class CachingAnswerer(Protocol):

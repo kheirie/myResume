@@ -10,6 +10,7 @@ from resumebot.chat import (
     PassageAnswerer,
     QuestionQuota,
     visitor_id,
+    with_previous_question,
 )
 from resumebot.corpus import Chunk
 from resumebot.retrieval import ABSTAIN_BELOW, Hit, SearchResult
@@ -184,3 +185,24 @@ def test_visitor_id_never_fails_on_missing_or_unusual_values():
 
     assert visitor_id(None, None) == visitor_id("unknown", None)
     assert visitor_id(Odd(), None) == visitor_id("198.51.100.4", None)
+
+
+# --- follow-up questions -----------------------------------------------------------------
+
+
+def test_follow_up_is_asked_with_the_previous_question():
+    combined = with_previous_question("can you give more details?", "Has Kerry worked in NLP?")
+    assert combined == "Has Kerry worked in NLP? can you give more details?"
+
+
+def test_question_with_its_own_topic_is_asked_alone():
+    assert with_previous_question("What are her NLP skills?", "Has Kerry worked in NLP?") == "What are her NLP skills?"
+
+
+def test_follow_up_without_a_previous_question_is_asked_alone():
+    assert with_previous_question("Tell me more", None) == "Tell me more"
+
+
+def test_follow_up_is_asked_alone_when_the_two_questions_are_too_long():
+    previous = "x" * MAX_QUESTION_CHARS
+    assert with_previous_question("More details?", previous) == "More details?"

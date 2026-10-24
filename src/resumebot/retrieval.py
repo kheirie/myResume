@@ -129,6 +129,24 @@ def is_overview_question(query: str) -> bool:
     return all(w in FILLER_WORDS for w in re.findall(r"[a-z]+", query.lower()))
 
 
+# "can you give more details?" has no topic of its own: searched alone it scored 0.558 and
+# was "not found"; asked together with the previous question it scored 0.764 (2026-10-24).
+# A follow-up has one of these cue words and otherwise only filler. Without a cue, a
+# topic-less question ("Who is she?") stays an overview question.
+FOLLOW_UP_CUES = {
+    "detail", "details", "elaborate", "else", "example", "examples", "expand", "explain", "further",
+    "how", "it", "more", "specific", "specifics", "that", "this", "why",
+}
+FOLLOW_UP_FILLER = {"and", "any", "could", "go", "into", "on", "other", "provide", "say", "share", "some", "would"}
+
+
+def is_follow_up_question(question: str) -> bool:
+    """True for questions such as "Can you give more details?" that only make sense after another one."""
+    words = re.findall(r"[a-z]+", prepare_query(question).lower())
+    allowed = FILLER_WORDS | FOLLOW_UP_CUES | FOLLOW_UP_FILLER
+    return any(w in FOLLOW_UP_CUES for w in words) and all(w in allowed for w in words)
+
+
 def expand_overview_query(query: str) -> str:
     """Replace a question with no topic of its own by an overview query."""
     return OVERVIEW_QUERY if is_overview_question(query) else query

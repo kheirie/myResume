@@ -14,6 +14,7 @@ from resumebot.retrieval import (
     Retriever,
     SearchResult,
     expand_overview_query,
+    is_follow_up_question,
     is_overview_question,
     expand_acronyms,
     prepare_query,
@@ -240,3 +241,21 @@ def test_topic_question_is_not_pinned(monkeypatch):
     monkeypatch.setattr(retrieval, "OVERVIEW_CHUNK_IDS", ("about#professional-summary",))
     hits = Retriever(overview_corpus(), FakeEmbedder()).search("BERT sentiment analysis", k=1).hits
     assert hits[0].chunk.id == "exp-c#sentiment"
+
+
+@pytest.mark.parametrize(
+    "question, follow_up",
+    [
+        ("can you give more details ?", True),
+        ("Could you elaborate on that?", True),
+        ("What else?", True),
+        ("Why?", True),
+        ("Who is she?", False),  # no cue word: an overview question
+        ("Tell me about Kerry", False),
+        ("Tell me more about her NLP work", False),  # has a topic of its own
+        ("How did she evaluate models?", False),
+        ("And at Sanofi?", False),
+    ],
+)
+def test_is_follow_up_question(question, follow_up):
+    assert is_follow_up_question(question) is follow_up

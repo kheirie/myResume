@@ -290,6 +290,13 @@ flowchart TB
   chat adds a note under it saying it is a saved answer that doesn't count. The cache empties
   whenever the app restarts.
 - Repeated questions, and questions that match nothing in my materials, don't count.
+- **Follow-up questions without memory.** Earlier answers are never sent to the model. A follow-up
+  with no topic of its own ("Can you give more details?", "Why?") is asked together with the last
+  question that had one, and the chat says so above the answer. Alone, "can you give more
+  details?" scored 0.558 and was "not found"; after "Has Kerry worked in NLP?" it scores 0.803. No
+  extra model call, and the cache still works. A follow-up with a new topic ("And at Sanofi?") is
+  still asked alone.
+
 ---
 
 ## Evaluation

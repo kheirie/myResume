@@ -15,7 +15,14 @@ sys.path.insert(0, str(ROOT / "src"))  # lets the host import the package withou
 import streamlit as st  # noqa: E402
 
 from resumebot.answering import MAX_QUESTION_CHARS, Answerer, CachedAnswerer  # noqa: E402
-from resumebot.chat import AI_ANSWERS_PER_DAY, Chat, PassageAnswerer, QuestionQuota, visitor_id  # noqa: E402
+from resumebot.chat import (  # noqa: E402
+    AI_ANSWERS_PER_DAY,
+    Chat,
+    PassageAnswerer,
+    QuestionQuota,
+    visitor_id,
+    with_previous_question,
+)
 from resumebot.corpus import load_corpus  # noqa: E402
 from resumebot.embeddings import FastEmbedEmbedder  # noqa: E402
 from resumebot.llm import LLMConfigError, build_llm  # noqa: E402
@@ -65,10 +72,17 @@ def models_in_order(llm) -> str:
 
 
 def reply(chat: Chat, question: str) -> str:
-    # Each question is answered on its own; earlier turns are not sent to the model.
+    # Earlier answers are not sent to the model. A follow-up with no topic of its own
+    # ("more details?") is asked together with the last question that had one.
     visitor = visitor_id(st.context.ip_address, st.context.headers.get("X-Forwarded-For"))
-    answer = chat.reply(question, visitor)
+    previous = st.session_state.get("topic_question")
+    asked = with_previous_question(question, previous)
+    if asked == question:
+        st.session_state.topic_question = question  # a follow-up never becomes the topic
+    answer = chat.reply(asked, visitor)
     shown = format_answer(answer, show_model=SHOW_MODEL)
+    if asked != question:
+        shown = f"*Read as a follow-up to: \"{previous}\"*\n\n{shown}"
     if answer.answered_by and not answer.from_cache:  # this answer used one of the visitor's AI answers
         shown += f"\n\n*{chat.remaining(visitor)} of {AI_ANSWERS_PER_DAY} AI answers left today.*"
     return shown
