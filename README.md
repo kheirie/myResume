@@ -4,7 +4,7 @@ A chatbot that recruiters can ask about my experience, skills, education, projec
 It answers only from a set of approved materials. It cites a source for every claim, and when
 something isn't documented it says so instead of guessing.
 
-**Live demo:** [Ask about Kheirie El Hariri](https://01a14a53-a1a3-dfbd-4aed-d6da95a2a800.share.connect.posit.cloud/)
+**Live demo:** [Ask about Kerry](https://01a14a53-a1a3-dfbd-4aed-d6da95a2a800.share.connect.posit.cloud/)
 
 > **Why this project exists.** I built resumebot as a **learning project** to get hands-on with
 > retrieval-augmented generation (RAG): chunking, embeddings, reranking, grounding, evaluation
