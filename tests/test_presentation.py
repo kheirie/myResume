@@ -1,6 +1,6 @@
 from resumebot.answering import NOT_FOUND, Answer
 from resumebot.corpus import Chunk
-from resumebot.presentation import format_answer, use_display_name
+from resumebot.presentation import CACHED_NOTE, format_answer, use_display_name
 
 
 def test_answer_is_shown_without_its_sources():
@@ -16,7 +16,7 @@ def test_answer_is_shown_without_its_sources():
         ("CV, Data Science version (2026)",),
     )
     shown = format_answer(Answer("Kheirie received a grant.", True, [chunk], "answered"))
-    assert shown == "Kheirie received a grant."
+    assert shown == "Kerry received a grant."
 
 
 def test_answer_without_citations_is_shown_alone():
@@ -49,9 +49,11 @@ def test_model_line_marks_a_fallback_and_why():
     )
 
 
-def test_model_line_marks_a_cached_answer():
+def test_cached_answer_says_it_is_saved_even_without_the_model_line():
+    # A cached answer is served after the daily limit, so the visitor must see why.
     answer = Answer("Kheirie received a grant.", True, [], "answered", answered_by="groq:m", from_cache=True)
-    assert format_answer(answer, show_model=True).endswith("*Model: m (groq) · from cache*")
+    assert format_answer(answer) == f"Kerry received a grant.\n\n*{CACHED_NOTE}*"
+    assert format_answer(answer, show_model=True) == f"Kerry received a grant.\n\n*{CACHED_NOTE}*\n\n*Model: m (groq)*"
 
 
 def test_busy_answer_lists_the_failed_models():
@@ -67,7 +69,7 @@ def test_display_name_replaces_the_name_and_the_full_name():
     )
 
 
-def test_passages_keep_the_corpus_wording():
-    # A passage answer has no model (answered_by is empty): it is quoted word for word.
-    answer = Answer("At Sanofi, Kheirie built pipelines.", False, [], "passages")
-    assert format_answer(answer) == "At Sanofi, Kheirie built pipelines."
+def test_passages_say_kerry_and_otherwise_keep_the_corpus_wording():
+    # A passage answer has no model (answered_by is empty): only the name changes.
+    answer = Answer("**Skills** (Skills listed on Kheirie's CVs)\n\nAt Sanofi, Kheirie built pipelines.", False, [], "passages")
+    assert format_answer(answer) == "**Skills** (Skills listed on Kerry's CVs)\n\nAt Sanofi, Kerry built pipelines."

@@ -285,8 +285,9 @@ flowchart TB
   best one or two corpus sections word for word. They're free, instant, and can't invent anything.
 - **In-memory cache** (`CachedAnswerer` in `answering.py`). It remembers the answers to the last
   500 different questions. A repeated question is answered from memory at no token cost; case,
-  spacing and a final "?" don't matter. Under a cached answer, the chat says "from cache". The
-  cache empties whenever the app restarts.
+  spacing and a final "?" don't matter. A cached answer is served even after the daily limit, so the
+  chat adds a note under it saying it is a saved answer that doesn't count. The cache empties
+  whenever the app restarts.
 - Repeated questions, and questions that match nothing in my materials, don't count.
 
 ---

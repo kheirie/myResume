@@ -17,6 +17,10 @@ from resumebot.answering import Answer
 # and lost quality (25/37 expected sources vs 30/38 for v14 on Ollama).
 _CANDIDATE_NAME = re.compile(r"\bKheirie(?: El Hariri)?\b")
 DISPLAY_NAME = "Kerry"
+CACHED_NOTE = (
+    "This question was answered earlier, so this is the saved answer. "
+    "It doesn't count toward your AI answers."
+)
 
 
 def use_display_name(text: str) -> str:
@@ -28,11 +32,13 @@ def format_answer(answer: Answer, show_model: bool = False) -> str:
     """The answer text; with show_model, a line saying which model wrote it.
 
     The line also says when a fallback answered (and which providers failed first),
-    when the answer came from the cache, and which models failed when none answered.
-    Model-written answers say Kerry; passages stay word for word.
+    and which models failed when none answered. A cached answer always says so, because
+    it is served even after the visitor's AI answers run out (Kheirie, 2026-10-24).
+    Every answer says Kerry, passages included (Kheirie, 2026-10-24); only the name changes.
     """
-    if answer.answered_by:
-        answer = replace(answer, text=use_display_name(answer.text))
+    answer = replace(answer, text=use_display_name(answer.text))
+    if answer.from_cache:
+        answer = replace(answer, text=f"{answer.text}\n\n*{CACHED_NOTE}*")
     if not show_model:
         return answer.text
     if answer.answered_by:
@@ -40,8 +46,6 @@ def format_answer(answer: Answer, show_model: bool = False) -> str:
         parts = [f"Model: {model} ({provider})"]
         if answer.fallback_from:
             parts.append("fallback after " + "; ".join(answer.fallback_from))
-        if answer.from_cache:
-            parts.append("from cache")
         return f"{answer.text}\n\n*{' · '.join(parts)}*"
     if answer.fallback_from:  # every provider failed
         return f"{answer.text}\n\n*All models failed: {'; '.join(answer.fallback_from)}*"
